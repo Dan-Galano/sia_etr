@@ -1,0 +1,178 @@
+
+        body {
+            background-color: #eeeeee;
+        }
+
+        
+        
+
+        .navbar- .navbar-nav li:not(:last-child) {
+            margin-right: 50px;
+        }
+
+        .navbar-nav li {
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        .navbar-nav .nav-item .nav-link:not(#active):hover {
+            
+            color: #242424;
+        }
+
+        .navbar-nav .nav-item .nav-link:not(#active) {
+            padding: 10px 50px;
+        }
+
+        .navbar-nav .nav-item.active .nav-link {
+            color: #0961E4;
+        }
+
+       
+
+        .org-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px 50px;
+            border-radius: 20px;
+        }
+
+        .org-name {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .org-type {
+            font-size: 1rem;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #048BED;
+            color: white !important;
+            border-color: #048BED #048BED #fff;
+        }
+
+        .nav-tabs .nav-link {
+            color: #048BED;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border-color: #048BED;
+        }
+
+       
+
+
+        .post-container {
+            border-radius: 10px;
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+        }
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .post-header img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid lightgray;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-right: 10px;
+        }
+        .post-header .page-name {
+            font-weight: bold;
+        }
+        .post-header .posted-date {
+            margin-left: auto;
+            font-size: smaller;
+            color: #757575;
+        }
+        .post-content {
+            margin: 10px;
+        }
+        .post-numbers {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: smaller;
+            color: #757575;
+        }
+        .post-actions {
+            display: flex;
+            justify-content: start;
+            margin-bottom: 10px;
+        }
+        .post-action-btn {
+            margin-right: 20px !important;
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: #555;
+        }
+        .post-action-btn:focus {
+            outline: none;
+        }
+        .post-action-btn:hover {
+            color: #048BED;
+        }
+
+
+
+        .postcreate-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            margin-left: 60px;
+        }
+
+        .post-icons {
+            display: flex;
+            align-items: center;
+            background-color: #eeeeee;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .post-icons i {
+            font-size: 20px;
+            color: #38761d;
+            margin-right: 10px;
+        }
+
+        .post-icons a {
+            text-decoration: none;
+            color: #38761d;
+            font-weight: bold;
+        }
+
+        .post-icons:hover {
+
+            background-color: #b5e7a0;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid lightgray;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }

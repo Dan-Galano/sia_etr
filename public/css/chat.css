@@ -1,0 +1,53 @@
+.container{
+  margin-top: 100px !important;
+}
+    .message-wrapper {
+      overflow-y: auto;
+      max-height: 300px;
+      scroll-behavior: smooth;
+    }
+    .message {
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .message .profile-picture {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      
+      border: 1px solid lightgray;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      float: left; 
+      margin-right: 10px; 
+    }
+    .message-content {
+      padding: 10px 15px;
+      border-radius: 20px;
+      max-width: 70%;
+    }
+    .user .message-content {
+      background-color: #0961E4;
+      color: white;
+      float: right; 
+      
+      min-width: 200px !important;
+    }
+    .other-user .message-content {
+      background-color: #f1f0f0;
+      color: black;
+      float: left; 
+      
+      min-width: 200px !important;
+    }
+    .message-text {
+      margin-bottom: 30px;
+    }
+    .message-time {
+      font-size: 12px;
+      opacity: 0.5;
+      position: absolute;
+      bottom: 0px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }

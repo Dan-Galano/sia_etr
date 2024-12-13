@@ -1,0 +1,188 @@
+
+        body {
+            background-color: #eeeeee;
+        }
+
+        .collapse {
+            margin-left: 100px;
+            
+        }
+
+        .navbar- .navbar-nav li:not(:last-child) {
+            margin-right: 50px;
+        }
+
+        .navbar-nav li {
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        .navbar-nav .nav-item .nav-link:not(#active):hover {
+            background-color: #eeee;
+            border-radius: 20px;
+        }
+
+        .navbar-nav .nav-item.active .nav-link {
+            color: #0961E4;
+        }
+
+        .post-box {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid lightgray;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            margin-left: 60px;
+        }
+
+        .post-icons {
+            display: flex;
+            align-items: center;
+            background-color: #eeeeee;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .post-icons i {
+            font-size: 20px;
+            color: #38761d;
+            margin-right: 10px;
+        }
+
+        .post-icons a {
+            text-decoration: none;
+            color: #38761d;
+            font-weight: bold;
+        }
+
+        .post-icons:hover {
+
+            background-color: #b5e7a0;
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.5;
+        }
+
+        .cover-photo {
+            position: relative;
+            margin-bottom: 20px;
+
+            border: 1px solid #ddd;
+            border-radius: 10px !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .cover-photo {
+            margin-bottom: 20px;
+        }
+
+        .cover-photo img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .cover-photo-details {
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .cover-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            margin-top: 100px !important;
+        }
+
+        .card-link {
+            display: block;
+            text-decoration: none;
+            transition: transform 0.2s ease-out;
+        }
+
+        .card-link:hover {
+            transform: scale(1.05);
+        }
+
+        .card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px !important;
+            padding-bottom: 75%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            background-color: #f17f00;
+        }
+
+        .card-img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            border-radius: 10px;
+            
+        }
+
+        .card-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: bolder;
+        }
+
+        .card-text {
+            font-size: 1rem;
+        }
+
+        .card-img-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            
+        }
+
+        .card-createnew {
+            font-size: 15px;
+            line-height: 2;
+            margin-top: 1rem;
+        }
