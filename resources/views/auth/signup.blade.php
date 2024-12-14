@@ -33,10 +33,10 @@
             <h3>Sign Up</h3>
         </div>
         <div class="form-group">
-            <label for="type">I am a:</label>
+            <label for="type">Register as:</label>
             <select class="form-control" id="type" name="type" required onchange="updateLabel()">
-                <option value="member" selected>Member</option>
-                <option value="organizer">Organizer</option>
+                <option value="member" selected>Student</option>
+                <option value="organizer">Organization</option>
             </select>
         </div>
         <div class="form-group">
