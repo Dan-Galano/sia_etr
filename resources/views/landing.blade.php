@@ -18,6 +18,7 @@
     ================================================== -->
     <link rel="stylesheet" href="{{ asset('css/vendor.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/organization_section_landing.css') }}">
 
     <!-- favicons
     ================================================== -->
@@ -25,6 +26,7 @@
     <link rel="manifest" href="{{ asset('site.webmanifest') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/PSUnifylogo.png') }}">
     <link rel="stylesheet" href="{{ asset('css/scrollbar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/orgdash.css') }}">
 </head>
 
 
@@ -527,101 +529,132 @@
                     </div>
                 </div> <!-- end modal -->
 
-
-
             </section> <!-- end s-folio -->
 
 
-            <!-- testimonials
-            ----------------------------------------------- -->
-            <section id="testimonials" class="s-testimonials">
 
+            {{-- ================================= All Organizations ================================= --}}
+            <section id="services" class="s-services target-section">
+                <!-- section-header -->
+                <div class="row section-header" data-num="04">
+                    <h3 class="column lg-12 section-header__pretitle pretitle text-pretitle">Who We Are</h3>
+                    <div class="column lg-6 stack-on-1100 section-header__primary">
+                        <h2 class="title text-display-1">
+                            Explore and connect with the diverse range of student organizations at PSU Urdaneta City
+                            Campus
+                        </h2>
+                    </div>
+                    <div class="column lg-6 stack-on-1100 section-header__secondary">
+                        <p class="desc">
+                            Discover a world of opportunities by browsing through the various organizations on campus.
+                            Whether you're looking to join a club, collaborate on exciting projects, or simply find
+                            like-minded individuals, this is your gateway to building connections and making a
+                            difference. Each organization is unique, bringing new ideas, passions, and events to life.
+                            Get involved, share your talents, and be part of something bigger. The possibilities are
+                            endless!
+                        </p>
+                    </div>
+                </div>
+                <!-- end section-header -->
+                <div class="unique-container mt-5">
+                    @php
+                        $organizations = DB::table('school_organizations')->get();
+                    @endphp
+                    <div class="unique-card-grid">
+                        @foreach ($organizations as $organization)
+                            <div class="unique-card">
+                                <div class="unique-card-img-overlay"></div>
+                                <div class="unique-card-content">
+                                    <h5 class="unique-card-title">{{ $organization->orgname }}</h5>
+                                    <p class="unique-card-text">{{ $organization->course }}</p>
+                                </div>
+                                <img src="{{ asset('cover-photos/' . $organization->coverphoto) }}"
+                                    class="unique-card-img-top" alt="Organization Cover Photo">
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+            {{-- ================================= End of all organizations ================================= --}}
+
+            {{-- ================================= Announcements =================================  --}}
+            <section id="testimonials" class="s-testimonials">
+                @php
+                    // Fetch all public posts with photos
+                    $posts = DB::table('posts')
+                        ->join('school_organizations', 'posts.organization_id', '=', 'school_organizations.id')
+                        ->select('posts.id as postid', 'posts.*', 'school_organizations.*') // Alias 'posts.id' as 'postid'
+                        ->where('type', 'withphoto')
+                        ->where('privacy', 'public')
+                        // ->limit(6)
+                        ->orderBy('posts.created_at', 'desc')
+                        ->get();
+                @endphp
                 <div class="row s-testimonials__content">
                     <div class="column lg-12">
 
                         <div class="swiper-container s-testimonials__slider">
 
                             <div class="swiper-wrapper">
-
-                                <div class="s-testimonials__slide swiper-slide">
-                                    <div class="s-testimonials__author">
-                                        <img src="images/avatars/user-02.png" alt="Author image"
-                                            class="s-testimonials__avatar">
-                                        <cite class="s-testimonials__cite">
-                                            <strong>Juan Dela Cruz</strong>
-                                            <span>BS Computer Engineering</span>
-                                        </cite>
-                                    </div>
-                                    <p>
-                                        Sobrang cool ng PSUnify! Dito, madali kaming nakakapag-plano at nakakapag-usap
-                                        ng mga kasama sa org. Solid, salamat sa PSUnify sa support!
-                                    </p>
-                                </div> <!-- end s-testimonials__slide -->
-
-                                <div class="s-testimonials__slide swiper-slide">
-                                    <div class="s-testimonials__author">
-                                        <img src="images/avatars/user-03.jpg" alt="Author image"
-                                            class="s-testimonials__avatar">
-                                        <cite class="s-testimonials__cite">
-                                            <strong>Mae Santos</strong>
-                                            <span>BS Civil Engineering.</span>
-                                        </cite>
-                                    </div>
-                                    <p>
-                                        Ang galing ng PSUnify! Nakakatuwa kasi mas madali na naming napaplano ang mga
-                                        activities namin sa org. Solid ng features, sulit na sulit!
-                                    </p>
-                                </div> <!-- end s-testimonials__slide -->
-
-                                <div class="s-testimonials__slide swiper-slide">
-                                    <div class="s-testimonials__author">
-                                        <img src="images/avatars/user-01.png" alt="Author image"
-                                            class="s-testimonials__avatar">
-                                        <cite class="s-testimonials__cite">
-                                            <strong>John Smith</strong>
-                                            <span>AB English</span>
-                                        </cite>
-                                    </div>
-                                    <p>
-                                        Grabe, sobrang helpful ng PSUnify! Hindi na kami nalilito sa pag-organize ng mga
-                                        events sa org namin. Ang saya lang!
-                                    </p>
-                                </div> <!-- end s-testimonials__slide -->
-
-                                <div class="s-testimonials__slide swiper-slide">
-                                    <div class="s-testimonials__author">
-                                        <img src="images/avatars/user-06.jpg" alt="Author image"
-                                            class="s-testimonials__avatar">
-                                        <cite class="s-testimonials__cite">
-                                            <strong>Maria Garcia</strong>
-                                            <span>BS Information Technology</span>
-                                        </cite>
-                                    </div>
-                                    <p>
-                                        Astig ng PSUnify! Sobrang dali ng paggamit, pati mga kasama sa org, mas nagiging
-                                        active dahil dito. Salamat, PSUnify!
-                                    </p>
-                                </div> <!-- end s-testimonials__slide -->
-
+                                @foreach ($posts as $post)
+                                    <div class="s-testimonials__slide swiper-slide">
+                                        <div class="s-testimonials__author">
+                                            <img src="{{ asset('cover-photos/' . $post->coverphoto) }}"
+                                                alt="Logo" class="s-testimonials__avatar">
+                                            @if ($post->withTag != null)
+                                                @php
+                                                    $taggedOrg = DB::table('school_organizations')
+                                                        ->where('id', $post->withTag)
+                                                        ->first();
+                                                @endphp
+                                                <cite class="s-testimonials__cite">
+                                                    <strong>{{-- $post->postid --}} {{ $post->orgname }} with
+                                                        {{ $taggedOrg->orgname }}</strong>
+                                                    <span>{{ date('d F Y', strtotime($post->created_at)) }}
+                                                        <span>・{{ $post->privacy }}</span>
+                                                </cite>
+                                            @else
+                                                <cite class="s-testimonials__cite">
+                                                    <strong>{{-- $post->postid --}} {{ $post->orgname }}</strong>
+                                                    <span>{{ date('d F Y', strtotime($post->created_at)) }}<span>・{{ $post->privacy }}</span>
+                                                </cite>
+                                            @endif
+                                        </div>
+                                        <p> {{-- Content/Caption --}}
+                                            {{ $post->content }}
+                                        </p>
+                                        <div class="row"> {{-- Photos --}}
+                                            @php
+                                                $photosContent = DB::table('posts')
+                                                    ->join('photo_posts', 'posts.id', '=', 'photo_posts.post_id')
+                                                    ->where('photo_posts.post_id', $post->postid)
+                                                    ->get();
+                                            @endphp
+                                            @foreach ($photosContent as $photo)
+                                                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                                    <img src="{{ asset('post-imgs/' . $photo->photo_filename) }}"
+                                                        class="img-fluid mb-4" alt="{{ $photo->photo_filename }}"
+                                                        style="object-fit: contain; height: 150px; border-radius: 20px; padding: 10px;box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </div> <!-- end s-announcements__slide -->
+                                @endforeach
                             </div> <!-- end swiper-wrapper -->
-
                             <div class="swiper-pagination"></div>
-
                         </div> <!-- end swiper-container -->
-
                     </div> <!-- end column -->
-                </div> <!-- end s-testimonials__content -->
+                </div> <!-- end s-anouncements__content -->
+            </section> <!-- end announcements -->
 
-            </section> <!-- end testimonials -->
-
-        </section>  <!-- end content -->
-
-
+        </section> <!-- end content -->
         <!-- # site-footer
         ================================================== -->
         <footer id="footer" class="s-footer target-section">
 
-            <div class="row section-header" data-num="04">
+            <div class="row section-header" data-num="05">
                 <h3 class="column lg-12 section-header__pretitle text-pretitle">Get In Touch</h3>
                 <div class="column lg-6 stack-on-1100 section-header__primary">
                     <h2 class="title text-display-1">

@@ -1,0 +1,77 @@
+/* Container */
+.unique-container {
+    margin-top: 100px;
+    padding: 0 200px;
+}
+
+/* Card Grid */
+.unique-card-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(250px, 1fr)
+    ); /* Adjust for more compact cards */
+    gap: 1.5rem;
+}
+
+/* Card */
+.unique-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #0961e4;
+    transition: transform 0.2s ease-out;
+    cursor: pointer; /* Add pointer cursor to show interactivity */
+}
+
+.unique-card:hover {
+    transform: scale(1.05);
+}
+
+/* Image Overlay */
+.unique-card-img-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2); /* Darken overlay for text contrast */
+    z-index: 1;
+}
+
+/* Card Content */
+.unique-card-content {
+    /* position: absolute; */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+/* Card Title */
+.unique-card-title {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    font-weight: bolder;
+}
+
+/* Card Text */
+.unique-card-text {
+    font-size: 1rem;
+    margin-top: 5px;
+}
+
+/* Card Image */
+.unique-card-img-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}

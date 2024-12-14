@@ -146,7 +146,7 @@
         <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" id="posts-tab" data-toggle="tab" href="#posts" role="tab"
-                    aria-controls="posts" aria-selected="true">Posts</a>
+                    aria-controls="posts" aria-selected="true">Announcements</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="events-tab" data-toggle="tab" href="#events" role="tab"
@@ -393,7 +393,8 @@
                                                 @if ($organization->id == $post->organization_id)
                                                     <!-- Current organization is the primary organization (ORG A) -->
                                                     <div class="page-name">{{ $organization->orgname }}
-                                                        <span>with</span> {{ $taggedOrg->orgname }}</div>
+                                                        <span>with</span> {{ $taggedOrg->orgname }}
+                                                    </div>
                                                 @elseif($organization->id == $post->withTag)
                                                     <!-- Current organization is the tagged organization (ORG B) -->
                                                     <div class="page-name">{{ $organization->orgname }} with
@@ -403,7 +404,8 @@
                                                 <div class="page-name">{{ $organization->orgname }}</div>
                                             @endif
                                             <div class="posted-date">{{ $post->created_at->format('F j, Y, g:i a') }}
-                                                <span>・{{ $post->privacy }}</span></div>
+                                                <span>・{{ $post->privacy }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                     @if ($user->type == 'organizer')
@@ -461,7 +463,8 @@
                                                 @if ($organization->id == $post->organization_id)
                                                     <!-- Current organization is the primary organization (ORG A) -->
                                                     <div class="page-name">{{ $organization->orgname }}
-                                                        <span>with</span> {{ $taggedOrg->orgname }}</div>
+                                                        <span>with</span> {{ $taggedOrg->orgname }}
+                                                    </div>
                                                 @elseif($organization->id == $post->withTag)
                                                     <!-- Current organization is the tagged organization (ORG B) -->
                                                     <div class="page-name">{{ $organization->orgname }} with
@@ -471,9 +474,8 @@
                                                 <div class="page-name">{{ $organization->orgname }}</div>
                                             @endif
                                             <div class="posted-date">{{ $post->created_at->format('F j, Y, g:i a') }}
-                                                <span>・{{ $post->privacy }}</span></div>
-
-
+                                                <span>・{{ $post->privacy }}</span>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -657,7 +659,8 @@
                                         <div>
                                             <div class="page-name">{{ $organization->orgname }}</div>
                                             <div class="posted-date">{{ $post->created_at->format('F j, Y, g:i a') }}
-                                                <span>・{{ $post->privacy }}</span></div>
+                                                <span>・{{ $post->privacy }}</span>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -728,7 +731,8 @@
                                         <div>
                                             <div class="page-name">{{ $organization->orgname }}</div>
                                             <div class="posted-date">{{ $post->created_at->format('F j, Y, g:i a') }}
-                                                <span>・{{ $post->privacy }}</span></div>
+                                                <span>・{{ $post->privacy }}</span>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -822,11 +826,14 @@
                         <div class="card-body">
                             <ul class="list-unstyled mb-0">
                                 <li class="mb-2"><i class="fas fa-building mr-2"></i>Name:
-                                    <b>{{ $organization->orgname }}</b> </li>
+                                    <b>{{ $organization->orgname }}</b>
+                                </li>
                                 <li class="mb-2"><i class="fas fa-book mr-2"></i>Course:
-                                    <b>{{ $organization->course }}</b> </li>
+                                    <b>{{ $organization->course }}</b>
+                                </li>
                                 <li class="mb-2"><i class="fas fa-info-circle mr-2"></i>Bio:
-                                    <b>{{ $organization->bio }}</b> </li>
+                                    <b>{{ $organization->bio }}</b>
+                                </li>
                                 <li><i class="fas fa-phone mr-2"></i>
 
                                     <a href="tel:{{ $organization->contact }}">{{ $organization->contact }}</a>
@@ -997,29 +1004,6 @@
                                                                         <br>
                                                                         <p>Select one or more reasons why you want to
                                                                             report this user:</p>
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input"
-                                                                                type="checkbox" id="pretending"
-                                                                                name="reasons[]"
-                                                                                value="Pretending to be someone">
-                                                                            <label class="form-check-label"
-                                                                                for="pretending">Pretending to be
-                                                                                someone</label>
-                                                                        </div>
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input"
-                                                                                type="checkbox" id="fakename"
-                                                                                name="reasons[]" value="Fake name">
-                                                                            <label class="form-check-label"
-                                                                                for="fakename">Fake name</label>
-                                                                        </div>
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input"
-                                                                                type="checkbox" id="fakeaccount"
-                                                                                name="reasons[]" value="Fake account">
-                                                                            <label class="form-check-label"
-                                                                                for="fakeaccount">Fake account</label>
-                                                                        </div>
                                                                         <div class="form-check">
                                                                             <input class="form-check-input"
                                                                                 type="checkbox" id="inappropriate"
