@@ -80,7 +80,7 @@
                         </li>
                         <li>
                             <a href="{{ route('signup') }}"
-                                style="background-color: rgb(230, 157, 1); color:white; padding: 10px 20px"
+                                style="background-color: rgb(230, 157, 1); color:white; padding: 10px 20px; border-radius: 5px"
                                 onmouseover="this.style.color='#051e42'" onmouseout="this.style.color='white'">
                                 GET STARTED
                             </a>
