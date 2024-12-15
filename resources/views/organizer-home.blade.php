@@ -151,7 +151,7 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="course">Course:</label>
+                                        <label for="course">Program:</label>
                                         <select class="form-control" id="course" name="course" required>
                                             <option value="Bachelor of Arts in English Language">Bachelor of Arts in English
                                                 Language</option>

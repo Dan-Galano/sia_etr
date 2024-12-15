@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSUnify - Organizer's Home</title>
+    <title>PSUnify - All Organizations</title>
     <link rel="icon" type="image/png" href="{{ asset('images/PSUnifylogo.png') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/scrollbar.css') }}">
@@ -28,14 +28,22 @@
                     $user = session('user');
                 @endphp
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{route('organizer-home')}}">My Organizations</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#" style="border-bottom: 2px solid #ffaa00a9;color: #ff7b00">All
-                            Organizations</a>
-                    </li>
-                </ul>
+    <li class="nav-item">
+        <a class="nav-link" 
+           href="{{ auth()->check() && auth()->user()->type === 'organizer' ? route('organization.show', ['id' => optional(auth()->user()->schoolOrganizations()->first())->id]) : route('organizer-home') }}" 
+           style="{{ request()->routeIs('organization.show') || request()->routeIs('organizer-home') ? 'border-bottom: 2px solid #ffaa00a9; color: #ff7b00;' : '' }}">
+           Home
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" 
+           href="{{ route('organizer-home-all') }}" 
+           style="{{ request()->routeIs('organizer-home-all') ? 'border-bottom: 2px solid #ffaa00a9; color: #ff7b00;' : '' }}">
+           All Organizations
+        </a>
+    </li>
+</ul>
+
                 <ul class="navbar-nav ml-auto">
 
                     <li class="nav-item dropdown">
