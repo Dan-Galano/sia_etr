@@ -97,8 +97,6 @@
     <div class="container mt-4">
         <div class="cover-photo">
              <a href="{{ route('organizer-home') }}" class="{{ strtolower($user->type) === 'organizer' ? 'btn btn-warning back-button' : 'btn btn-primary back-button' }}"><i class="fas fa-arrow-left"></i>&nbsp; Back</a>
-     
-
 
             <div class="org-info">
                 <div class="org-name">{{ $orgname}} 
@@ -127,11 +125,11 @@
                 ->where('member_id', Auth::id())
                 ->exists();
         @endphp
-        <a href="javascript:void(0);" onclick="toggleJoin({{ $orgid->id }})">
+        <!-- <a href="javascript:void(0);" onclick="toggleJoin({{ $orgid->id }})">
             <button id="join-button" class="btn btn-{{ $isMember ? 'secondary' : 'success' }}">
                 {{ $isMember ? 'PENDING' : 'JOIN' }}
             </button>
-        </a>
+        </a> -->
     </span>
 @endif
 
@@ -856,8 +854,7 @@
                                             <i class="fas fa-toggle-{{ $member->status === 'approved' ? 'off' : 'on' }}"></i>
                                             {{ $member->status === 'approved' ? 'Active' : 'Disabled' }}
                                         </button>
-                                    </form>
-                                    
+                                    </form>   
                                 </td>
                                 <td style="text-align: center; vertical-align: top;">
                                 <form action="{{ route('organization.deleteMember', ['org_id' => $orgid->id, 'member_id' => $member->id]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this member?');">
@@ -1415,28 +1412,54 @@
 
 <script>
     function toggleJoin(orgId) {
-        fetch(`/organization/${orgId}/toggleJoin`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({})
-        })
-        .then(response => response.json())
-        .then(data => {
-            let joinButton = document.getElementById('join-button');
-            if (data.status === 'joined') {
-                joinButton.classList.remove('btn-success');
-                joinButton.classList.add('btn-secondary');
-                joinButton.textContent = 'PENDING';
-            } else {
-                joinButton.classList.remove('btn-secondary');
-                joinButton.classList.add('btn-success');
-                joinButton.textContent = 'JOIN';
-            }
+    fetch(`/organization/${orgId}/toggleJoin`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}', // Include CSRF token for security
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}), // Send an empty payload if no additional data is needed
+    })
+    .then(response => response.json()) // Parse the JSON response
+    .then(data => {
+        // Handle the response based on the status
+        if (data.status === 'unjoined') {
+            Swal.fire({
+                title: 'Success',
+                text: data.message || 'You have successfully unjoined the organization.',
+                icon: 'success',
+            });
+        } else if (data.status === 'joined') {
+            Swal.fire({
+                title: 'Success',
+                text: data.message || 'You have successfully joined the organization.',
+                icon: 'success',
+            });
+        } else if (data.status === 'not_member') {
+            Swal.fire({
+                title: 'Not Allowed',
+                text: 'You are not in the list of members for this organization.',
+                icon: 'warning',
+            });
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'An unexpected status was returned.',
+                icon: 'error',
+            });
+        }
+    })
+    .catch(error => {
+        // Handle any errors that occur during the fetch
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'An error occurred. Please try again later.',
+            icon: 'error',
         });
-    }
+    });
+}
+
 </script>
 
 <script>

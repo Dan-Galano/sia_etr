@@ -191,16 +191,14 @@ public function showOrg($id)
 
     public function toggleMember($id, $member_id)
     {
-        $member = DB::table('organization_members')
-            ->where('organization_id', $id)
-            ->where('member_id', $member_id)
+        $member = DB::table('organization_members')   
+            ->where('id', $member_id)
             ->first();
 
         if ($member) {
             $newStatus = $member->status === 'approved' ? 'rejected' : 'approved';
             DB::table('organization_members')
-                ->where('organization_id', $id)
-                ->where('member_id', $member_id)
+                ->where('id', $member_id)
                 ->update(['status' => $newStatus]);
         }
 
