@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\OrganizationMember;
 use App\Models\SchoolOrganization;
+use Illuminate\Support\Facades\DB;
+
 
 class MemberController extends Controller
 {
@@ -53,5 +55,20 @@ public function toggleJoin(Request $request, $id)
         return response()->json(['status' => 'joined']);
     }
 }
+
+public function deleteMember($org_id, $member_id)
+    {
+        // Log request for debugging
+
+        // Perform the deletion
+        DB::table('organization_members')
+            ->where('organization_id', $org_id)
+            ->where('id', $member_id)
+            ->delete();
+
+       
+
+        return redirect()->back()->with('success', 'Member deleted successfully.');
+    }
 
 }
