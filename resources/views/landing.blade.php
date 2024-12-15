@@ -537,7 +537,7 @@
             <section id="services" class="s-services target-section">
                 <!-- section-header -->
                 <div class="row section-header" data-num="04">
-                    <h3 class="column lg-12 section-header__pretitle pretitle text-pretitle">Who We Are</h3>
+                    <h3 class="column lg-12 section-header__pretitle pretitle text-pretitle">Student Organizations</h3>
                     <div class="column lg-6 stack-on-1100 section-header__primary">
                         <h2 class="title text-display-1">
                             Explore and connect with the diverse range of student organizations at PSU Urdaneta City
