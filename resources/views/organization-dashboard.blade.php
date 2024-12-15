@@ -160,6 +160,10 @@
                 <a class="nav-link" id="photos-tab" data-toggle="tab" href="#photos" role="tab"
                     aria-controls="photos" aria-selected="false">Photos</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" id="photos-tab" data-toggle="tab" href="#officers" role="tab"
+                    aria-controls="photos" aria-selected="false">Officers</a>
+            </li>
             @php
                 $isMember = false;
                 if (Auth::check()) {
@@ -881,6 +885,116 @@
                 </div>
                 <br><br><br>
             </div>
+
+            {{-- OFFICERS TAB TABLE --}}
+
+            <div class="tab-pane fade" id="officers" role="tabpanel" aria-labelledby="members-tab">
+                <div class="container mt-5">
+
+                    {{-- CHECKS IF ORG AND USER--}}
+                    @if ($user->type == 'organizer') 
+                        <a href="#" class="" data-toggle="modal" data-target="#addOfficerModal">
+                            <button type="button" class="btn btn-primary mb-4">Add officer</button>
+                        </a>
+                    @endif
+                    <table id="officersTable" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Contact</th>
+                                @if ($user->type == 'organizer')
+                                    <th>Action</th>
+                                @endif
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php 
+                            $officers = DB::table('officers')
+                                ->where('from_organization_id', $organization->id)
+                                ->get();
+                            @endphp
+                            @foreach ($officers as $officer)
+                                <tr>
+                                    <td>{{ $officer->officer_first_name }} {{ $officer->officer_last_name }}</td>
+                                    <td>{{ $officer->position }}</td>
+                                    <td>{{ $officer->officer_contact }}</td>
+                                    
+                                    {{-- CHECKS IF ORG AND USER--}}
+                                    @if ($user->type == 'organizer')
+                                        <td>
+                                            <form
+                                                action="{{ route('officer.delete', ['id' => $officer->id])}}"
+                                                method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-danger"> 
+                                                    <i class="fa fa-remove"></i> Remove officer
+                                                </button>
+                                            </form>
+                                        </td>
+                                    @endif
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+            </div>
+
+            {{-- MODAL HERE FOR ADDING AN OFFICER --}}
+
+            <div class="modal fade" id="addOfficerModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="reportModalTitle">
+                                ADD OFFICER</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ route('officer.add') }}" method="POST">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="container-fluid bg-light p-3">
+                                    <div class="row">
+                                        <div class="col">
+                                            <input type="hidden" name="from_organization_id" value="{{ $organization->id }}" required>
+                                            <div class="mb-3">
+                                                <label for="officer_first_name" class="form-label">First Name:</label>
+                                                <input type="text" class="form-control" id="officer_first_name"
+                                                    name="officer_first_name" placeholder="Enter first name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="officer_last_name" class="form-label">Last Name:</label>
+                                                <input type="text" class="form-control" id="officer_last_name"
+                                                    name="officer_last_name" placeholder="Enter last name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="officer_last_name" class="form-label">Position:</label>
+                                                <input type="text" class="form-control" id="position"
+                                                    name="position" placeholder="Enter last name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="officer_contact" class="form-label">Contact:</label>
+                                                <input type="text" class="form-control" id="officer_contact"
+                                                    name="officer_contact" placeholder="Enter contact details" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Add</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             @if ($isMember)
                 <div class="tab-pane fade" id="members" role="tabpanel" aria-labelledby="members-tab">
                     <div class="container mt-5">
@@ -1063,7 +1177,6 @@
                     <br><br><br>
                 </div>
             @endif
-
         </div>
 
 
@@ -1440,6 +1553,7 @@
         <script>
             $(document).ready(function() {
                 $('#membersTable').DataTable();
+                $('#officersTable').DataTable();
                 $('#reportsTable').DataTable();
             });
         </script>
