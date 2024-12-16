@@ -37,8 +37,10 @@ class SigninController extends Controller
             Session::put('user', $user);
             if ($user->type === 'organizer') {
                 return redirect()->route('organizer-home');
-            } else {
+            } else if($user->type === 'member'){
                 return redirect()->route('member-home');
+            } else{
+                return redirect()->route('admin-home');
             }
         }
         return redirect()->back()->withInput()->withErrors(['message' => 'Invalid email or password']);
