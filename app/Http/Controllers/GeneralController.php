@@ -125,12 +125,16 @@ class GeneralController extends Controller
 //     return view('organization-dashboard', compact('orgid', 'orgname', 'coverphoto', 'organization', 'photos', 'members', 'isMember', 'reports'));
 // }
 
+
 public function showOrg($id)
 {
     $orgid = SchoolOrganization::findOrFail($id);
-    $organization = SchoolOrganization::findOrFail($id);
+    $organization = $orgid;  // Same variable for consistency
     $orgname = $orgid->orgname;
     $coverphoto = $orgid->coverphoto;
+
+    // Fetch all organizations for the dropdown or another purpose
+    $organizations = SchoolOrganization::all(); // Make sure you're getting the data
 
     // Fetch photos related to the organization
     $photos = DB::table('photo_posts')
@@ -153,7 +157,7 @@ public function showOrg($id)
         ->select('users.id', 'users.photo', 'users.studentid', 'users.firstname', 'users.middlename', 'users.lastname', 'users.email', 'organization_members.status')
         ->get();
 
-    // Check if the authenticated user is a member of the organization
+    // Check if the authenticated user is a member or the admin (owner) of the organization
     $isMember = false;
     if (Auth::check()) {
         $userId = Auth::id();
@@ -168,7 +172,7 @@ public function showOrg($id)
                 ->where('id', $organization->id)
                 ->where('admin_id', $userId)
                 ->exists();
-            $isMember = $isAdmin;
+            $isMember = $isAdmin;  // Check if the user is the admin
         }
     }
 
@@ -177,14 +181,9 @@ public function showOrg($id)
         ->with(['reportedUser', 'reporter'])
         ->get();
 
-    // Fetch all organizations for the dropdown (optional: filter based on user or other criteria)
-    $organizations = SchoolOrganization::all();
-
-    // Pass the variables to the view
+    // Pass the variables to the view, including $organizations
     return view('organization-dashboard', compact('orgid', 'orgname', 'coverphoto', 'organization', 'photos', 'members', 'isMember', 'reports', 'organizations'));
 }
-
-
 
     public function toggleMember($id, $member_id)
     {
@@ -261,82 +260,86 @@ public function showOrg($id)
 
     //     return redirect()->route('organization.show', $id)->with('success', 'Post created successfully.');
     // }
+    
     public function storePost(Request $request, $id)
-    {
-        $request->validate([
-            'content' => 'nullable|string',
-            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'event_title' => 'nullable|string',
-            'event_start_time' => 'nullable|date',
-            'event_end_time' => 'nullable|date|after_or_equal:event_start_time',
-            'privacy' => 'nullable',
-            'taggedOrg_id' => 'nullable|integer|exists:school_organizations,id',
-        ]);
-    
-        // Function to create a post
-        $createPost = function ($organization_id, $taggedOrg_id = null) use ($request) {
-            $post = new Post();
-            $post->organization_id = $organization_id;
-            $post->user_id = auth()->id();
-            $post->content = $request->content;
-            $post->event_title = $request->event_title;
-            $post->event_start_time = $request->event_start_time;
-            $post->event_end_time = $request->event_end_time;
-            $post->privacy = $request->privacy;
-    
-            // Set the tagged organization if available
-            $post->withTag = $taggedOrg_id;
-    
-            if ($request->hasFile('photos') && $request->event_start_time && $request->event_end_time) {
-                $post->type = 'eventwithphoto';
-            } elseif ($request->event_start_time && $request->event_end_time) {
-                $post->type = 'event';
-            } elseif ($request->hasFile('photos')) {
-                $post->type = 'withphoto';
-            } elseif ($request->content) {
-                $post->type = 'text';
-            } else {
-                $post->type = 'unknown';
-            }
-    
-            $post->save();  // Save the post first
-    
-            // Save associated photos for the post
-            if ($request->hasFile('photos')) {
-                foreach ($request->file('photos') as $photoFile) {
-                    // Sanitize filename to avoid issues with special characters
-                    $photoFilename = time() . '_' . preg_replace('/[^a-zA-Z0-9-_\.]/', '', $photoFile->getClientOriginalName());
-    
-                    // Use Laravel's store method to move the file
-                    $path = $photoFile->storeAs('post-imgs', $photoFilename);
-    
-                    // Create a new PhotoPost record for each uploaded photo
-                    PhotoPost::create([
-                        'post_id' => $post->id,  // Associate the photo with the current post
-                        'photo_filename' => $photoFilename,  // Store the file name
-                    ]);
-                }
-            }
-    
-            return $post;
-        };
-    
-        // Create the post for the primary organization
-        $createPost($id, $request->taggedOrg_id);
-    
-        // Create the post for the tagged organization if taggedOrg_id is provided and is different from the primary organization
-        if ($request->taggedOrg_id && $request->taggedOrg_id != $id) {
-            // Set the taggedOrg_id for the primary organization in the tagged organization’s post
-            $createPost($request->taggedOrg_id, $id);
+{
+    $request->validate([
+        'content' => 'nullable|string',
+        'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'event_title' => 'nullable|string',
+        'event_start_time' => 'nullable|date',
+        'event_end_time' => 'nullable|date|after_or_equal:event_start_time',
+        'privacy' => 'nullable',
+        'taggedOrg_id' => 'nullable|integer|exists:school_organizations,id',
+    ]);
+
+    // Function to create a post
+    $createPost = function ($organization_id, $taggedOrg_id = null) use ($request) {
+        $post = new Post();
+        $post->organization_id = $organization_id;
+        $post->user_id = auth()->id();
+        $post->content = $request->content;
+        $post->event_title = $request->event_title;
+        $post->event_start_time = $request->event_start_time;
+        $post->event_end_time = $request->event_end_time;
+        $post->privacy = $request->privacy;
+
+        // Set the tagged organization if available
+        $post->withTag = $taggedOrg_id;
+
+        // Determine post type based on available data
+        if ($request->hasFile('photos') && $request->event_start_time && $request->event_end_time) {
+            $post->type = 'eventwithphoto';
+        } elseif ($request->event_start_time && $request->event_end_time) {
+            $post->type = 'event';
+        } elseif ($request->hasFile('photos')) {
+            $post->type = 'withphoto';
+        } elseif ($request->content) {
+            $post->type = 'text';
+        } else {
+            $post->type = 'unknown';
         }
-    
-        $message = 'Post created successfully.';
-        if ($request->taggedOrg_id) {
-            $message .= ' Also posted in the tagged organization.';
+
+        $post->save();  // Save the post first
+
+        // Save associated photos for the post
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photoFile) {
+                // Sanitize filename to avoid issues with special characters
+                $photoFilename = time() . '_' . preg_replace('/[^a-zA-Z0-9-_\.]/', '', $photoFile->getClientOriginalName());
+
+                // Use Laravel's store method to move the file to 'public/post-imgs' directory
+                // Make sure the file is stored in the 'public' disk for easy access via URL
+                $path = $photoFile->storeAs('public/post-imgs', $photoFilename); // Store in 'public/post-imgs'
+
+                // Create a new PhotoPost record for each uploaded photo
+                PhotoPost::create([
+                    'post_id' => $post->id,  // Associate the photo with the current post
+                    'photo_filename' => $photoFilename,  // Store the file name
+                ]);
+            }
         }
-    
-        return redirect()->route('organization.show', $id)->with('success', $message);
+
+        return $post;
+    };
+
+    // Create the post for the primary organization
+    $createPost($id, $request->taggedOrg_id);
+
+    // Create the post for the tagged organization if taggedOrg_id is provided and is different from the primary organization
+    if ($request->taggedOrg_id && $request->taggedOrg_id != $id) {
+        // Set the taggedOrg_id for the primary organization in the tagged organization’s post
+        $createPost($request->taggedOrg_id, $id);
     }
+
+    $message = 'Post created successfully.';
+    if ($request->taggedOrg_id) {
+        $message .= ' Also posted in the tagged organization.';
+    }
+
+    return redirect()->route('organization.show', $id)->with('success', $message);
+}
+
     
     public function showProfile()
     {
@@ -417,24 +420,45 @@ public function showOrg($id)
  
          return $hasMembership;
      }
-
      public function getSchoolOrganizations()
      {
-         
+         $user = Auth::user();
+     
+         // Fetch all organizations
          $organizations = SchoolOrganization::all();
-         return $organizations;
+     
+         // Determine the current user's organization (for organizers)
+         $orgname = null;
+         if ($user->type === 'organizer') {
+             $orgOwnedByUser = $user->schoolOrganizations()->where('admin_id', $user->id)->first();
+             $orgname = $orgOwnedByUser ? $orgOwnedByUser->name : null;
+         }
+     
+         // Return all organizations and the orgname (if applicable)
+         return compact('organizations', 'orgname');
      }
+     
 
-     public function getSchoolOrganizationsMember()
-     {
-        $user = Auth::user();
-    
-        
-        $organizationsM = $user->organizationsMember()->wherePivot('status', 'approved')->orderBy('organization_members.created_at', 'desc')->get();
-        
-        return $organizationsM;
-     }
+public function getSchoolOrganizationsMember()
+{
+    $user = Auth::user();
 
+    if ($user->type === 'organizer') {
+        // Return organizations owned/administered by the organizer
+        return $user->schoolOrganizations()->where('admin_id', $user->id)->get();
+    } elseif ($user->type === 'member') {
+        // Return organizations the member belongs to
+        return $user->organizationsMember()
+            ->wherePivot('status', 'approved')
+            ->orderBy('organization_members.created_at', 'desc')
+            ->get();
+    }
+
+    return collect(); // Return an empty collection for undefined user types
+}
+
+     
+     
      public function getSchoolOrganizationsNotMember()
 {
     $user = Auth::user();

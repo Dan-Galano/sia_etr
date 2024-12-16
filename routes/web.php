@@ -10,14 +10,82 @@ use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\OfficerController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReportController;
+use App\Models\SchoolOrganization;
+use Illuminate\Support\Facades\Auth;
+
+Route::get('/signin', function () {
+    // If the user is logged in, determine their redirection path
+    if (Auth::check()) {
+        $user = Auth::user();
+
+        if ($user->type === 'member') {
+            // Redirect members to their home page
+            return redirect()->route('member-home');
+        }
+
+        if ($user->type === 'organizer') {
+            // Find the organization associated with the organizer
+            $organization = SchoolOrganization::where('admin_id', $user->id)->first();
+
+            if (!$organization) {
+                // If not an admin, check if the organizer is a member of an organization
+                $organization = $user->schoolOrganizations()->first();
+            }
+
+            if ($organization) {
+                // Redirect to the organizer's organization page
+                return redirect()->route('organization.show', ['id' => $organization->id]);
+            }
+
+            // If no organization is found, redirect to a fallback route
+            return redirect('/')->withErrors(['message' => 'No organization found for the user']);
+        }
+    }
+
+    // If not authenticated, show the signin form
+    return view('auth.signin');
+})->name('signin');
+
+Route::get('/signup', function () {
+    // If the user is logged in, determine their redirection path
+    if (Auth::check()) {
+        $user = Auth::user();
+
+        if ($user->type === 'member') {
+            // Redirect members to their home page
+            return redirect()->route('member-home');
+        }
+
+        if ($user->type === 'organizer') {
+            // Find the organization associated with the organizer
+            $organization = SchoolOrganization::where('admin_id', $user->id)->first();
+
+            if (!$organization) {
+                // If not an admin, check if the organizer is a member of an organization
+                $organization = $user->schoolOrganizations()->first();
+            }
+
+            if ($organization) {
+                // Redirect to the organizer's organization page
+                return redirect()->route('organization.show', ['id' => $organization->id]);
+            }
+
+            // If no organization is found, redirect to a fallback route
+            return redirect('/')->withErrors(['message' => 'No organization found for the user']);
+        }
+    }
+
+    // If not authenticated, show the signup form
+    return view('auth.signup');
+})->name('signup');
 
 
-Route::get('/signup', [SignupController::class, 'showSignupForm'])->name('signup');
-Route::post('/signup', [SignupController::class, 'signup']);
+Route::post('/signup/student', [SignupController::class, 'signupStudent'])->name('signupStudent');
+Route::post('/signup/organization', [SignupController::class, 'signupOrganization'])->name('signupOrganization');
 
 
 Route::get('/', [SigninController::class, 'showLanding'])->name('landing');
-Route::get('/signin', [SigninController::class, 'showSigninForm'])->middleware('guest')->name('signin');
+
 Route::post('/signin', [SigninController::class, 'signin']);
 
 
@@ -29,10 +97,14 @@ Route::get('/organizer-home', function () {
 
 
 Route::get('/organizer-home/all', function () {
-    $organizations = app(GeneralController::class)->getSchoolOrganizations();
-    $organizationsM = app(GeneralController::class)->getSchoolOrganizationsMember(); 
-    return view('organizer-home-all', compact('organizations', 'organizationsM'));
-})->middleware(['auth', 'redirect.home'])->name('organizer-home-all');
+    // Get all organizations and the current user's organization name (if applicable)
+    $data = app(GeneralController::class)->getSchoolOrganizations();
+    $organizations = $data['organizations'];
+    $orgname = $data['orgname'] ?? null; // Handle cases where orgname is not set
+
+    // Return the view with all data
+    return view('organizer-home-all', compact('organizations', 'orgname'));
+})->name('organizer-home-all');
 
 
 Route::get('/member-home', function () {
@@ -44,16 +116,20 @@ Route::get('/member-home', function () {
 })->middleware(['auth', 'redirect.home'])->name('member-home');
 
 Route::get('/member-home/all', function () {
+    // Fetch necessary data for the member's home page
     $hasMembership = app(GeneralController::class)->checkMembership();
-    $organizations = app(GeneralController::class)->getSchoolOrganizations();
+    $data = app(GeneralController::class)->getSchoolOrganizations();
+    $organizations = $data['organizations'];
     $organizationsM = app(GeneralController::class)->getSchoolOrganizationsMember();
-    $organizationsNotMembers = app(GeneralController::class)->getSchoolOrganizationsNotMember(); 
+    $organizationsNotMembers = app(GeneralController::class)->getSchoolOrganizationsNotMember();
+
+    // Return the view with all data
     return view('member-home-all', compact('hasMembership', 'organizations', 'organizationsM', 'organizationsNotMembers'));
 })->middleware(['auth', 'redirect.home'])->name('member-home-all');
 
 
 
-
+ 
 Route::post('/organizations', [GeneralController::class, 'storeOrganization'])->name('organizations.store');
 
 

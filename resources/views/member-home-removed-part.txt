@@ -1,0 +1,110 @@
+ <!-- modal to join new org -->
+
+
+        <!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Join a New School Organization</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="organizationForm" method="POST" action="{{ route('membership.store') }}"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <select class="form-control" id="schoolorg" name="schoolorg" required>
+                                    <option value="" disabled selected>Select Organization</option>
+                                    @foreach($organizationsNotMembers as $organizationsNotMember)
+                                        <option value="{{ $organizationsNotMember->id }}">{{ $organizationsNotMember->orgname }}</option>
+                                    @endforeach
+                                </select>
+                                @error('schoolorg')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="alert alert-info" role="alert">
+                                <strong>Note:</strong> You need to wait for approval by the school organization admin. Once
+                                approved, you'll be able to view the organization's page.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Join</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div> -->
+        <!-- kapag walang school org dito sa else -->
+    @else
+
+
+        <!-- <div class="container mt-5">
+
+
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <a href="#" class="card-link" id="createOrgBtn">
+                            <div class="card rounded shadow-sm">
+                                <div class="card-content">
+                                    <i class="fas fa-plus" style="font-size:80px;"></i>
+                                    <h6 class="card-createnew">JOIN A NEW SCHOOL ORGANIZATION</h6>
+                                </div>
+                            </div>
+                        </a>  -->
+
+                        <!-- ditokana -->
+
+
+                        <!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Join a New School Organization</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form id="organizationForm" method="POST" action="{{ route('membership.store') }}"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <select class="form-control" id="schoolorg" name="schoolorg" required>
+                                                    <option value="" disabled selected>Select Organization</option>
+                                                    @foreach($organizations as $organization)
+                                                        <option value="{{ $organization->id }}">{{ $organization->orgname }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('schoolorg')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="alert alert-info" role="alert">
+                                                <strong>Note:</strong> You need to wait for approval by the school
+                                                organization admin. Once approved, you'll be able to view the organization's
+                                                page.
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Join</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div> -->
+
+
+                    <!-- </div>
+
+
+                </div> -->

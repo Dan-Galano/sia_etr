@@ -57,6 +57,13 @@
                 </li>
             </ul>
         </div>
+        <div>
+        @if(Auth::check() && Auth::user()->type === 'member')
+            Student
+        @else
+            Organization
+        @endif
+        </div>
     </nav>
 
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -70,8 +77,11 @@
 
 
     <div class="container" style="margin-top: 120px;">
-    <a href="{{ route('organizer-home') }}" class="btn btn-warning mb-3"><i class="fas fa-arrow-left"></i> Back to Home</a>
-
+    @if(Auth::check() && Auth::user()->type === 'member')
+        <a href="{{ route('member-home-all') }}" class="btn btn-warning"><i class="fas fa-arrow-left"></i>&nbsp; Back</a>
+    @else
+    <a href="{{ route('organizer-home-all') }}" class="btn btn-warning"><i class="fas fa-arrow-left"></i>&nbsp; Back</a>
+        @endif
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
@@ -109,7 +119,7 @@
 
                             <div class="form-group row">
                                 <label for="firstname"
-                                    class="col-md-4 col-form-label text-md-right">{{ __('First Name') }}</label>
+                                    class="col-md-4 col-form-label text-md-right">  @if(Auth::check() && Auth::user()->type === 'member') {{ __('First Name') }} @else {{ __("Organization's Name") }}  @endif</label>
                                 <div class="col-md-6">
                                     <input id="firstname" type="text"
                                         class="form-control @error('firstname') is-invalid @enderror" name="firstname"
@@ -120,6 +130,7 @@
                                     @enderror
                                 </div>
                                 <br> <br>
+                                @if(Auth::check() && Auth::user()->type === 'member') 
                                 <label for="middlename"
                                     class="col-md-4 col-form-label text-md-right">{{ __('Middle Name') }}</label>
                                 <div class="col-md-6">
@@ -132,6 +143,7 @@
                                     @enderror
                                 </div>
                                 <br> <br>
+                          
                                 <label for="lastname"
                                     class="col-md-4 col-form-label text-md-right">{{ __('Last Name') }}</label>
                                 <div class="col-md-6">
@@ -157,6 +169,7 @@
                                     @enderror
                                 </div>
                                 <br> <br>
+                                @endif
                                 <label for="email"
                                     class="col-md-4 col-form-label text-md-right">{{ __('Email') }}</label>
                                 <div class="col-md-6">
