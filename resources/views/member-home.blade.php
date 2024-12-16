@@ -111,13 +111,58 @@
 
             </div>
         </div>
-        @else
-    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-        <p class="text-muted text-center">
-            <i class="fas fa-info-circle"></i> You are not part of any organizations yet.
-        </p>
+
+
+        <!-- modal to join new org -->
+
+
+        <!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Join a New School Organization</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="organizationForm" method="POST" action="{{ route('membership.store') }}"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <select class="form-control" id="schoolorg" name="schoolorg" required>
+                                    <option value="" disabled selected>Select Organization</option>
+                                    @foreach($organizationsNotMembers as $organizationsNotMember)
+                                        <option value="{{ $organizationsNotMember->id }}">{{ $organizationsNotMember->orgname }}</option>
+                                    @endforeach
+                                </select>
+                                @error('schoolorg')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="alert alert-info" role="alert">
+                                <strong>Note:</strong> You need to wait for approval by the school organization admin. Once
+                                approved, you'll be able to view the organization's page.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Join</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div> -->
+        <!-- kapag walang school org dito sa else -->
+    @else
+
+    <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; text-align: center;">
+        <i class="fas fa-users-slash" style="font-size: 48px; color: black;"></i> <br>
+        <h3>You are not part of any organization</h3>
     </div>
-@endif
+
+    @endif
 
 
 

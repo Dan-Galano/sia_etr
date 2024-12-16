@@ -189,6 +189,15 @@ Route::post('/profile/update-password', [GeneralController::class, 'updatePasswo
 Route::post('/membership', [MemberController::class, 'store'])->name('membership.store');
 
 
+// student checking
+Route::get('/check-student/{studentid}', [GeneralController::class, 'checkStudent']);
+
+// student adding
+Route::post('organization/add-member', [GeneralController::class, 'addMember']);
+
+//student delete
+Route::delete('/organization/{org_id}/member/{member_id}', [MemberController::class, 'deleteMember'])->name('organization.deleteMember');
+
 
 
 Route::get('/organization/{org_id}/chat', [GeneralController::class, 'loadChatView'])->name('chat.view');
@@ -200,3 +209,4 @@ Route::post('/organization/{id}/toggleJoin', [MemberController::class, 'toggleJo
 Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
 Route::get('/export-reports-pdf/{orgId}', [ReportController::class, 'exportReportsPDF'])->name('export.reports.pdf');
 Route::get('/export-reports-csv/{orgId}', [ReportController::class, 'exportReportsCSV'])->name('export.reports.csv');
+

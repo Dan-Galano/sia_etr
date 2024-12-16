@@ -13,7 +13,9 @@ use App\Models\Post;
 use App\Models\PhotoPost;
 use App\Models\Chat;
 use App\Models\Report;
+use App\Models\EnrolledStudent;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class GeneralController extends Controller
 {
@@ -126,6 +128,7 @@ class GeneralController extends Controller
 // }
 
 
+
 public function showOrg($id)
 {
     $orgid = SchoolOrganization::findOrFail($id);
@@ -154,7 +157,7 @@ public function showOrg($id)
         ->join('users', 'organization_members.member_id', '=', 'users.id')
         ->where('organization_members.organization_id', $organization->id)
         ->orderBy('organization_members.created_at', 'desc')
-        ->select('users.id', 'users.photo', 'users.studentid', 'users.firstname', 'users.middlename', 'users.lastname', 'users.email', 'organization_members.status')
+        ->select('users.photo', 'users.studentid', 'users.firstname', 'users.middlename', 'users.lastname', 'users.email', 'organization_members.status', 'organization_members.payment_status', 'organization_members.id')
         ->get();
 
     // Check if the authenticated user is a member or the admin (owner) of the organization
@@ -187,16 +190,14 @@ public function showOrg($id)
 
     public function toggleMember($id, $member_id)
     {
-        $member = DB::table('organization_members')
-            ->where('organization_id', $id)
-            ->where('member_id', $member_id)
+        $member = DB::table('organization_members')   
+            ->where('id', $member_id)
             ->first();
 
         if ($member) {
             $newStatus = $member->status === 'approved' ? 'rejected' : 'approved';
             DB::table('organization_members')
-                ->where('organization_id', $id)
-                ->where('member_id', $member_id)
+                ->where('id', $member_id)
                 ->update(['status' => $newStatus]);
         }
 
@@ -509,6 +510,102 @@ public function sendMessage(Request $request, $orgId)
     
     return redirect()->route('chat.view', ['org_id' => $orgId]);
 }
+
+// CHECKING STUDENT FOR MEMBER ADD
+public function checkStudent($studentId)
+{
+    // Assuming you're using the EnrolledStudent model to check
+    $student = DB::table('users')->where('studentid', $studentId)->first();
+
+    if ($student) {
+        return response()->json([
+            'success' => true,
+            'data' => $student
+        ]);
+    } else {
+        return response()->json([
+            'success' => false,
+            'message' => 'No student found'
+        ], 404);  // Return a 404 error if no student is found
+    }
 }
+// MEMBER ADD
+public function addMember(Request $request)
+{
+    // Validate the incoming request
+    $validated = $request->validate([
+        'studentid' => 'required|string|max:255',
+        'organization_id' => 'required|integer',
+        'payment_status' => 'required|string|max:20',
+    ]);
+
+    // Find the user by studentid
+    $user = DB::table('users')->where('studentid', $validated['studentid'])->first();
+
+    if ($user) {
+        // Insert the member into the organization_members table
+        DB::table('organization_members')->insert([
+            'organization_id' => $validated['organization_id'],
+            'member_id' => $user->id,
+            'payment_status' => $validated['payment_status'],
+            'status' => 'approved', // Default status
+            'is_admin' => 0, // Default to non-admin
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Member added successfully to the organization.',
+        ]);
+    } else {
+        return response()->json([
+            'success' => false,
+            'message' => 'No student found with the provided student ID.',
+        ], 404);
+    }
+}
+
+//DELETE MEMBER
+
+
+
+public function deleteMember($org_id, $member_id)
+{
+    // Log the received parameters
+    Log::info("Deleting member with org_id: $org_id and member_id: $member_id");
+
+    // Check if the member exists in the organization
+    $member = DB::table('organization_members')
+                ->where('organization_id', $org_id)
+                ->where('member_id', $member_id)
+                ->first();
+
+    if (!$member) {
+        Log::error("Member not found in organization. org_id: $org_id, member_id: $member_id");
+        return redirect()->back()->with('error', 'Member not found.');
+    }
+
+    // Log the member details before deletion
+    Log::info("Member found: ", (array) $member);
+
+    // Perform the deletion
+    DB::table('organization_members')
+        ->where('organization_id', $org_id)
+        ->where('member_id', $member_id)
+        ->delete();
+
+    // Log deletion success
+    Log::info("Member deleted successfully: org_id: $org_id, member_id: $member_id");
+
+    return redirect()->back()->with('success', 'Member deleted successfully.');
+}
+
+
+
+}
+
+
+
 
 

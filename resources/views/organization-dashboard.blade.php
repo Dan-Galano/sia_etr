@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSUnify - {{$orgname}}</title>
+    <title>PSUnify - {{$orgname}}</title> 
     <link rel="icon" type="image/png" href="{{ asset('images/PSUnifylogo.png') }}">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/scrollbar.css') }}">
@@ -14,6 +14,7 @@
    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
         .cover-photo {
@@ -205,7 +206,7 @@
             ->value('type');
     }
 @endphp
-
+<!-- JOIN ORGANIZATION -->
 @if (!$isMember && !$isAdmin && $userType === 'member')
     <span id="join-section">
         @php
@@ -213,11 +214,11 @@
                 ->where('member_id', Auth::id())
                 ->exists();
         @endphp
-        <a href="javascript:void(0);" onclick="toggleJoin({{ $orgid->id }})">
+        <!-- <a href="javascript:void(0);" onclick="toggleJoin({{ $orgid->id }})">
             <button id="join-button" class="btn btn-{{ $isMember ? 'secondary' : 'success' }}">
                 {{ $isMember ? 'PENDING' : 'JOIN' }}
             </button>
-        </a>
+        </a> -->
     </span>
 @endif
 
@@ -265,6 +266,7 @@
         }
     }
 @endphp
+            <!-- MEMBER TAB BUTTON -->
             @if($isMember)
             <li class="nav-item">
                 <a class="nav-link" id="members-tab" data-toggle="tab" href="#members" role="tab" aria-controls="members"
@@ -933,10 +935,16 @@
                 </div>
                 <br><br><br>
             </div>
+            <!-- MEMBERS SECTION-->
             @if($isMember)
     <div class="tab-pane fade" id="members" role="tabpanel" aria-labelledby="members-tab">
-        <div class="container mt-5">
-            @if($user->type == "organizer")                
+        <div class="container mt-2">         
+            @if($user->type == "organizer")
+            <div style="display: flex; justify-content: flex-start; ">
+                <!-- Trigger the modal with a button -->
+                <button class="btn btn-warning mb-3" data-toggle="modal" data-target="#addMemberModal"><i class="fa fa-user"></i> Add Member</button>
+                <!-- <button class="btn btn-success ml-2 mb-3">Bulk add</button> -->
+            </div>                  
                 <table id="membersTable" class="table table-striped table-bordered" style="width:100%">
                     <thead>
                         <tr>
@@ -944,8 +952,10 @@
                             <th>Student ID</th>
                             <th>Full Name</th>
                             <th>Email</th>
+                            <th>Payment</th>
                             <th>Status</th>
                             <th>Action</th>
+                            <!-- <th>Action</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -957,23 +967,91 @@
                                 <td>{{ $member->studentid }}</td>
                                 <td>{{ $member->firstname }} {{ $member->middlename }} {{ $member->lastname }}</td>
                                 <td>{{ $member->email }}</td>
-                                <td>
-                                    <button class="{{ strtolower($member->status) === 'approved' ? 'btn btn-outline-success' : (strtolower($member->status) === 'rejected' ? 'btn btn-outline-danger' : 'btn btn-outline-secondary') }}">{{ $member->status }}</button>
-                                </td>
+                                <td>{{ $member->payment_status }}</td>
                                 <td>
                                     <form action="{{ route('organization.toggleMember', ['id' => $orgid->id, 'member_id' => $member->id]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
-                                        <button type="submit" class="btn btn-{{ $member->status === 'approved' ? 'danger' : 'success' }}">
+                                        <button type="submit" class="btn btn-{{ $member->status === 'approved' ? 'success' : 'dark' }}">
                                             <i class="fas fa-toggle-{{ $member->status === 'approved' ? 'off' : 'on' }}"></i>
-                                            {{ $member->status === 'approved' ? 'Disable access' : 'Enable access' }}
+                                            {{ $member->status === 'approved' ? 'Active' : 'Disabled' }}
                                         </button>
-                                    </form>
+                                    </form>   
                                 </td>
+                                <td style="text-align: center; vertical-align: top;">
+                                <form action="{{ route('organization.deleteMember', ['org_id' => $orgid->id, 'member_id' => $member->id]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this member?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+
+
+                                </td>
+
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+                <!-- MEMBER ADD MODAL -->
+                
+                <div class="modal fade" id="addMemberModal" tabindex="-1" role="dialog" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addMemberModalLabel">Add New Member</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" value="{{$orgid->id}}" id="organizationId" style="display:none;">
+                                <!-- Form Inputs -->
+                                 <div class="d-flex">
+                                    <label for="studentid" class="mr-2">Student ID</label>
+                                    <div id="studentid-error" class="text-danger" style="display:none;">No student found</div>
+                                 </div>
+                                
+                                <div class="form-group d-flex align-items-center">
+                                    <input type="text" class="form-control mr-2" id="studentid" placeholder="Enter student id" required>
+                                    <button class="btn btn-info" id="checkStudentBtn">Check</button>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="payment_status">Payment Status</label>
+                                    <select class="form-control" id="payment_status">
+                                        <option value="Half-year">Half-year</option>
+                                        <option value="Full-year">Full-year</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="firstname">First Name</label>
+                                    <input type="text" class="form-control" id="firstname" readonly required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="middlename">Middle Name</label>
+                                    <input type="text" class="form-control" id="middlename" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastname">Last Name</label>
+                                    <input type="text" class="form-control" id="lastname" readonly required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact">Contact</label>
+                                    <input type="text" class="form-control" id="contact" readonly required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-success" id="addMemberBtn">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
             @else
                 <table id="membersTable" class="table table-striped table-bordered" style="width:100%">
                     <thead>
@@ -996,11 +1074,11 @@
                                 @if ($member->id != $user->id)
                                 
                                 <a href="#" class="report-btn" data-toggle="modal" data-target="#reportModal{{ $member->id }}">
-        <button class="btn btn-danger">
-            <i class="fas fa-flag"></i>
-            &nbsp; Report
-        </button>
-    </a>
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-flag"></i>
+                                    &nbsp; Report
+                                </button>
+                            </a>
     <div class="modal fade" id="reportModal{{ $member->id }}" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -1316,6 +1394,84 @@
 </script>
 
 
+<!-- CHECKING STUDENT ADD MEMBER -->
+
+<script>
+    $('#checkStudentBtn').on('click', function() {
+        var studentId = $('#studentid').val(); // Get the student ID from the input field
+
+        $.ajax({
+            url: '/check-student/' + studentId,  // Make sure the full URL is used
+            method: 'GET',
+            success: function(response) {
+                console.log(response); // Log the response to see what is returned
+
+                if (response.success) {
+                    // Fill in the input fields with student data
+                    $('#firstname').val(response.data.firstname);
+                    $('#middlename').val(response.data.middlename);
+                    $('#lastname').val(response.data.lastname);
+                    $('#contact').val(response.data.email);
+
+                    // Hide the error message if student is found
+                    $('#studentid-error').hide();
+                }
+            },
+            error: function(xhr, status, error) {
+                
+                $('#studentid-error').show().text('account not found');
+            }
+        });
+    });
+</script>
+
+<!-- MEMBER ADDING -->
+
+<script>
+    $('#addMemberBtn').on('click', function() {
+        // Get values from the modal form
+        var studentId = $('#studentid').val();
+        var organizationId = $('#organizationId').val();
+        var paymentStatus = $('#payment_status').val();
+
+        // Combine first name, middle name, and last name into full nam
+
+        // Validate required fields
+        if (!studentId || !paymentStatus) {
+            alert('All fields are required.');
+            return;
+        }
+
+        // AJAX request to insert the data
+        $.ajax({
+            url: '/organization/add-member', // Adjust the URL as per your routes
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}', // Include CSRF token
+                studentid: studentId,
+                organization_id: organizationId,
+                payment_status: paymentStatus
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Member added successfully!');
+                    $('#addMemberModal').modal('hide'); // Close the modal
+                    location.reload(); // Reload the page to update the table
+                } else {
+                    alert(response.message || 'Failed to add member.');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    });
+</script>
+
+
+
+</script>
 
       
 
@@ -1378,28 +1534,54 @@
 
 <script>
     function toggleJoin(orgId) {
-        fetch(`/organization/${orgId}/toggleJoin`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({})
-        })
-        .then(response => response.json())
-        .then(data => {
-            let joinButton = document.getElementById('join-button');
-            if (data.status === 'joined') {
-                joinButton.classList.remove('btn-success');
-                joinButton.classList.add('btn-secondary');
-                joinButton.textContent = 'PENDING';
-            } else {
-                joinButton.classList.remove('btn-secondary');
-                joinButton.classList.add('btn-success');
-                joinButton.textContent = 'JOIN';
-            }
+    fetch(`/organization/${orgId}/toggleJoin`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}', // Include CSRF token for security
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}), // Send an empty payload if no additional data is needed
+    })
+    .then(response => response.json()) // Parse the JSON response
+    .then(data => {
+        // Handle the response based on the status
+        if (data.status === 'unjoined') {
+            Swal.fire({
+                title: 'Success',
+                text: data.message || 'You have successfully unjoined the organization.',
+                icon: 'success',
+            });
+        } else if (data.status === 'joined') {
+            Swal.fire({
+                title: 'Success',
+                text: data.message || 'You have successfully joined the organization.',
+                icon: 'success',
+            });
+        } else if (data.status === 'not_member') {
+            Swal.fire({
+                title: 'Not Allowed',
+                text: 'You are not in the list of members for this organization.',
+                icon: 'warning',
+            });
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'An unexpected status was returned.',
+                icon: 'error',
+            });
+        }
+    })
+    .catch(error => {
+        // Handle any errors that occur during the fetch
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'An error occurred. Please try again later.',
+            icon: 'error',
         });
-    }
+    });
+}
+
 </script>
 
 <script>
@@ -1426,7 +1608,7 @@
         @endif
 
 
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        
         <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 <script>
