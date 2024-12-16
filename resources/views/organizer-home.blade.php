@@ -14,11 +14,13 @@
 </head>
 
 <body>
-    @if($hasSchoolOrg)
+    @if ($hasSchoolOrg)
 
         <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white justify-items-center">
-            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnifylogo.png') }}" alt="Logo" width="50"></a>
-            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnify.png') }}" alt="Logo" height="30"></a>
+            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnifylogo.png') }}" alt="Logo"
+                    width="50"></a>
+            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnify.png') }}" alt="Logo"
+                    height="30"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -30,11 +32,12 @@
                 @endphp
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#" style="border-bottom: 2px solid #ffaa00a9;color: #ff7b00">My
+                        <a class="nav-link active" href="#"
+                            style="border-bottom: 2px solid #ffaa00a9;color: #ff7b00">My
                             Organizations</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{route('organizer-home-all')}}">All Organizations</a>
+                        <a class="nav-link" href="{{ route('organizer-home-all') }}">All Organizations</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
@@ -42,9 +45,9 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            @if($user)
+                            @if ($user)
                                 <span style=" margin-right: 10px;">{{ $user->firstname }} </span>
-                                @if(Auth::check() && Auth::user()->photo)
+                                @if (Auth::check() && Auth::user()->photo)
                                     <img src="{{ asset('profile-imgs/' . Auth::user()->photo) }}" alt="Profile Picture"
                                         class="rounded-circle" style="width: 30px; height: 30px;">
                                 @else
@@ -95,8 +98,8 @@
 
                 </div>
 
-                @if(Auth::user()->schoolOrganizations->isNotEmpty())
-                    @foreach(Auth::user()->schoolOrganizations()->orderBy('created_at', 'desc')->get() as $organization)
+                @if (Auth::user()->schoolOrganizations->isNotEmpty())
+                    @foreach (Auth::user()->schoolOrganizations()->orderBy('created_at', 'desc')->get() as $organization)
                         <div class="col-lg-4 col-md-6 mb-4">
                             <a href="{{ route('organization.show', $organization->id) }}" class="card-link">
                                 <div class="card rounded shadow-sm">
@@ -105,13 +108,11 @@
                                         <h5 class="card-title">{{ $organization->orgname }}</h5>
                                         <p class="card-text">{{ $organization->course }}</p>
                                     </div>
-                                    <img src="{{ asset('cover-photos/' . $organization->coverphoto) }}" class="card-img-top"
-                                        alt="Organization Cover Photo">
+                                    <img src="{{ asset('cover-photos/' . $organization->coverphoto) }}"
+                                        class="card-img-top" alt="Organization Cover Photo">
                                 </div>
                             </a>
                         </div>
-
-
                     @endforeach
                 @else
                     <div class="col-12">
@@ -153,7 +154,8 @@
                                     <div class="form-group">
                                         <label for="course">Program:</label>
                                         <select class="form-control" id="course" name="course" required>
-                                            <option value="Bachelor of Arts in English Language">Bachelor of Arts in English
+                                            <option value="Bachelor of Arts in English Language">Bachelor of Arts in
+                                                English
                                                 Language</option>
                                             <option value="Bachelor of Early Childhood Education">Bachelor of Early
                                                 Childhood
@@ -165,9 +167,11 @@
                                                 Mathematics</option>
                                             <option value="Bachelor of Science in Architecture">Bachelor of Science in
                                                 Architecture</option>
-                                            <option value="Bachelor of Science in Civil Engineering">Bachelor of Science in
+                                            <option value="Bachelor of Science in Civil Engineering">Bachelor of
+                                                Science in
                                                 Civil Engineering</option>
-                                            <option value="Bachelor of Science in Computer Engineering">Bachelor of Science
+                                            <option value="Bachelor of Science in Computer Engineering">Bachelor of
+                                                Science
                                                 in
                                                 Computer Engineering</option>
                                             <option value="Bachelor of Science in Electrical Engineering">Bachelor of
@@ -176,7 +180,8 @@
                                             <option value="Bachelor of Science in Mechanical Engineering">Bachelor of
                                                 Science in
                                                 Mechanical Engineering</option>
-                                            <option value="No Specific Program (Open to All)">No Specific Program (Open to
+                                            <option value="No Specific Program (Open to All)">No Specific Program (Open
+                                                to
                                                 All)
                                             </option>
                                         </select>
@@ -190,8 +195,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="bio">Bio:</label>
-                                        <textarea class="form-control" id="bio" name="bio"
-                                            required>{{ old('bio') }}</textarea>
+                                        <textarea class="form-control" id="bio" name="bio" required>{{ old('bio') }}</textarea>
                                         @error('bio')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -271,21 +275,21 @@
                                 </div>
                             </div>
                             <!-- YouTube and Cover Photo -->
-                          
 
-                                <div class="form-group">
-                                    <label for="coverphoto">Cover Photo:</label>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="coverphoto" name="coverphoto"
-                                            accept="image/*" onchange="previewPhoto(event)" required>
-                                        <label class="custom-file-label" for="coverphoto">Choose Cover Photo</label>
-                                    </div>
-                                    @error('coverphoto')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+
+                            <div class="form-group">
+                                <label for="coverphoto">Cover Photo:</label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="coverphoto"
+                                        name="coverphoto" accept="image/*" onchange="previewPhoto(event)" required>
+                                    <label class="custom-file-label" for="coverphoto">Choose Cover Photo</label>
                                 </div>
+                                @error('coverphoto')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
 
-                          
+
                             <!-- End of YouTube and Cover Photo -->
                             <!-- End of Similar structure for other fields -->
 
@@ -306,12 +310,14 @@
         </div>
         <!-- kapag walang school org dito sa else -->
     @else
-
         <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white justify-items-center">
-            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnifylogo.png') }}" alt="Logo" width="50"></a>
-            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnify.png') }}" alt="Logo" height="30"></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnifylogo.png') }}" alt="Logo"
+                    width="50"></a>
+            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnify.png') }}" alt="Logo"
+                    height="30"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -335,11 +341,12 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            @if($user)
+                            @if ($user)
                                 <span style=" margin-right: 10px;">{{ $user->firstname }} </span>
-                                @if(Auth::check() && Auth::user()->photo)
-                                    <img src="{{ asset('profile-imgs/' . Auth::user()->photo) }}" alt="Profile Picture"
-                                        class="rounded-circle" style="width: 30px; height: 30px;">
+                                @if (Auth::check() && Auth::user()->photo)
+                                    <img src="{{ asset('profile-imgs/' . Auth::user()->photo) }}"
+                                        alt="Profile Picture" class="rounded-circle"
+                                        style="width: 30px; height: 30px;">
                                 @else
                                     <img src="{{ asset('profile-imgs/defaultpfp.png') }}" alt="Profile Picture"
                                         class="rounded-circle" style="width: 30px; height: 30px;">
@@ -363,7 +370,7 @@
             <div>
                 Organization
             </div>
-            
+
         </nav>
 
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -390,24 +397,26 @@
 
 
 
-                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                            aria-hidden="true">
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Create New School Organization</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <h5 class="modal-title" id="exampleModalLabel">Create New School Organization
+                                        </h5>
+                                        <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                    <form id="organizationForm" method="POST" action="{{ route('organizations.store') }}"
-                                        enctype="multipart/form-data">
+                                    <form id="organizationForm" method="POST"
+                                        action="{{ route('organizations.store') }}" enctype="multipart/form-data">
                                         @csrf
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label for="orgname">Organization Name:</label>
-                                                <input type="text" class="form-control" id="orgname" name="orgname"
-                                                    value="{{ old('orgname') }}" required>
+                                                <input type="text" class="form-control" id="orgname"
+                                                    name="orgname" value="{{ old('orgname') }}" required>
                                                 @error('orgname')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -415,38 +424,48 @@
                                             <div class="form-group">
                                                 <label for="course">Course:</label>
                                                 <select class="form-control" id="course" name="course" required>
-                                                    <option value="Bachelor of Arts in English Language">Bachelor of Arts in
+                                                    <option value="Bachelor of Arts in English Language">Bachelor of
+                                                        Arts in
                                                         English
                                                         Language</option>
-                                                    <option value="Bachelor of Early Childhood Education">Bachelor of Early
+                                                    <option value="Bachelor of Early Childhood Education">Bachelor of
+                                                        Early
                                                         Childhood
                                                         Education</option>
-                                                    <option value="Bachelor of Science in Information Technology">Bachelor
+                                                    <option value="Bachelor of Science in Information Technology">
+                                                        Bachelor
                                                         of
                                                         Science in
                                                         Information Technology</option>
-                                                    <option value="Bachelor of Science in Mathematics">Bachelor of Science
+                                                    <option value="Bachelor of Science in Mathematics">Bachelor of
+                                                        Science
                                                         in
                                                         Mathematics</option>
-                                                    <option value="Bachelor of Science in Architecture">Bachelor of Science
+                                                    <option value="Bachelor of Science in Architecture">Bachelor of
+                                                        Science
                                                         in
                                                         Architecture</option>
-                                                    <option value="Bachelor of Science in Civil Engineering">Bachelor of
+                                                    <option value="Bachelor of Science in Civil Engineering">Bachelor
+                                                        of
                                                         Science in
                                                         Civil Engineering</option>
-                                                    <option value="Bachelor of Science in Computer Engineering">Bachelor of
+                                                    <option value="Bachelor of Science in Computer Engineering">
+                                                        Bachelor of
                                                         Science
                                                         in
                                                         Computer Engineering</option>
-                                                    <option value="Bachelor of Science in Electrical Engineering">Bachelor
+                                                    <option value="Bachelor of Science in Electrical Engineering">
+                                                        Bachelor
                                                         of
                                                         Science in
                                                         Electrical Engineering</option>
-                                                    <option value="Bachelor of Science in Mechanical Engineering">Bachelor
+                                                    <option value="Bachelor of Science in Mechanical Engineering">
+                                                        Bachelor
                                                         of
                                                         Science in
                                                         Mechanical Engineering</option>
-                                                    <option value="No Specific Program (Open to All)">No Specific Program
+                                                    <option value="No Specific Program (Open to All)">No Specific
+                                                        Program
                                                         (Open to
                                                         All)
                                                     </option>
@@ -457,16 +476,15 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="bio">Bio:</label>
-                                                <textarea class="form-control" id="bio" name="bio"
-                                                    required>{{ old('bio') }}</textarea>
+                                                <textarea class="form-control" id="bio" name="bio" required>{{ old('bio') }}</textarea>
                                                 @error('bio')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
                                             <div class="form-group">
                                                 <label for="contact">Contact:</label>
-                                                <input type="text" class="form-control" id="contact" name="contact"
-                                                    value="{{ old('contact') }}" required>
+                                                <input type="text" class="form-control" id="contact"
+                                                    name="contact" value="{{ old('contact') }}" required>
                                                 @error('contact')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -475,13 +493,14 @@
                                                 <label for="coverphoto">Cover Photo:</label>
                                                 <div class="custom-file">
                                                     <input type="file" class="custom-file-input" id="coverphoto"
-                                                        name="coverphoto" accept="image/*" onchange="previewPhoto(event)"
-                                                        required>
+                                                        name="coverphoto" accept="image/*"
+                                                        onchange="previewPhoto(event)" required>
                                                     <label class="custom-file-label" for="coverphoto">Choose Cover
                                                         Photo</label>
                                                 </div>
                                                 <div class="text-center mt-2">
-                                                    <img id="coverphoto-preview" class="img ml-2 mx-auto" src="#"
+                                                    <img id="coverphoto-preview" class="img ml-2 mx-auto"
+                                                        src="#"
                                                         style="display: none; max-width: 100%; max-height: 300px;">
                                                 </div>
                                                 @error('coverphoto')
@@ -509,33 +528,33 @@
 
 
 
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-            <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-            <script>
-                $(document).ready(function () {
-                    $("#createOrgBtn").click(function (e) {
-                        e.preventDefault();
-                        $("#myModal").modal("show");
-                    });
-                });
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#createOrgBtn").click(function(e) {
+                e.preventDefault();
+                $("#myModal").modal("show");
+            });
+        });
 
-                function previewCoverPhoto(event) {
-                    var preview = document.getElementById('coverphoto-preview');
-                    var file = event.target.files[0];
-                    var reader = new FileReader();
-                    reader.onload = function () {
-                        preview.src = reader.result;
-                        preview.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
-                }
+        function previewCoverPhoto(event) {
+            var preview = document.getElementById('coverphoto-preview');
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
 
-                document.getElementById('coverphoto').addEventListener('change', function () {
-                    previewCoverPhoto(event);
-                });
-            </script>
+        document.getElementById('coverphoto').addEventListener('change', function() {
+            previewCoverPhoto(event);
+        });
+    </script>
 
 </body>
 

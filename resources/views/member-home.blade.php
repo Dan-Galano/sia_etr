@@ -15,33 +15,36 @@
 
 <body>
     <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white justify-items-center">
-        <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnifylogo.png') }}" alt="Logo" width="50"></a>
-        <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnify.png') }}" alt="Logo" height="30"></a>
+        <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnifylogo.png') }}" alt="Logo"
+                width="50"></a>
+        <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnify.png') }}" alt="Logo"
+                height="30"></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        
+
             @php
                 $user = session('user');
             @endphp
-        <ul class="navbar-nav mx-auto">
-        <li class="nav-item">
-                <a class="nav-link active" href="#" style="border-bottom: 2px solid #ffaa00a9;color: #ff7b00">Joined Organizations</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{route('member-home-all')}}">All Organizations</a>
-            </li>
-        </ul>
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#"
+                        style="border-bottom: 2px solid #ffaa00a9;color: #ff7b00">Joined Organizations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('member-home-all') }}">All Organizations</a>
+                </li>
+            </ul>
             <ul class="navbar-nav ml-auto">
-               
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        @if($user)
+                        @if ($user)
                             <span style=" margin-right: 10px;">{{ $user->firstname }} </span>
-                            @if(Auth::check() && Auth::user()->photo)
+                            @if (Auth::check() && Auth::user()->photo)
                                 <img src="{{ asset('profile-imgs/' . Auth::user()->photo) }}" alt="Profile Picture"
                                     class="rounded-circle" style="width: 30px; height: 30px;">
                             @else
@@ -75,8 +78,8 @@
 
 
 
-    
-    @if($hasMembership)
+
+    @if ($hasMembership)
 
 
         <div class="container mt-5">
@@ -93,7 +96,7 @@
 
                 </div> -->
 
-                @foreach($organizationsM as $organizationN)
+                @foreach ($organizationsM as $organizationN)
                     <div class="col-lg-4 col-md-6 mb-4">
                         <a href="{{ route('organization.show', $organizationN->id) }}" class="card-link">
                             <div class="card rounded shadow-sm">
@@ -102,8 +105,8 @@
                                     <h5 class="card-title">{{ $organizationN->orgname }}</h5>
                                     <p class="card-text">{{ $organizationN->course }}</p>
                                 </div>
-                                <img src="{{ asset('cover-photos/' . $organizationN->coverphoto) }}" class="card-img-top"
-                                    alt="Organization Cover Photo">
+                                <img src="{{ asset('cover-photos/' . $organizationN->coverphoto) }}"
+                                    class="card-img-top" alt="Organization Cover Photo">
                             </div>
                         </a>
                     </div>
@@ -111,13 +114,13 @@
 
             </div>
         </div>
-        @else
-    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-        <p class="text-muted text-center">
-            <i class="fas fa-info-circle"></i> You are not part of any organizations yet.
-        </p>
-    </div>
-@endif
+    @else
+        <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+            <p class="text-muted text-center">
+                <i class="fas fa-info-circle"></i> You are not part of any organizations yet.
+            </p>
+        </div>
+    @endif
 
 
 
@@ -128,33 +131,33 @@
 
 
 
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-            <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-            <script>
-                $(document).ready(function () {
-                    $("#createOrgBtn").click(function (e) {
-                        e.preventDefault(); 
-                        $("#myModal").modal("show");
-                    });
-                });
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#createOrgBtn").click(function(e) {
+                e.preventDefault();
+                $("#myModal").modal("show");
+            });
+        });
 
-                function previewCoverPhoto(event) {
-                    var preview = document.getElementById('coverphoto-preview');
-                    var file = event.target.files[0];
-                    var reader = new FileReader();
-                    reader.onload = function () {
-                        preview.src = reader.result;
-                        preview.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
-                }
+        function previewCoverPhoto(event) {
+            var preview = document.getElementById('coverphoto-preview');
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
 
-                document.getElementById('coverphoto').addEventListener('change', function () {
-                    previewCoverPhoto(event);
-                });
-            </script>
+        document.getElementById('coverphoto').addEventListener('change', function() {
+            previewCoverPhoto(event);
+        });
+    </script>
 
 </body>
 
