@@ -148,7 +148,7 @@ if ($request->hasFile('org_logo')) {
             
         } catch (\Exception $e) {
             \Log::error('Error in signupOrganization method: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'There was an error while processing your request. Please try again.'], 500);
+            return response()->json(['success' => false, 'message' =>  $e->getMessage()], 500);
         }
     }
     
