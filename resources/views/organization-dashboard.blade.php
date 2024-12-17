@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSUnify - {{$orgname}}</title> 
+    <title>PSUnify - {{ $orgname }}</title>
     <link rel="icon" type="image/png" href="{{ asset('images/PSUnifylogo.png') }}">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/scrollbar.css') }}">
@@ -29,171 +29,182 @@
 </head>
 
 <body>
-@if(Auth::check() && Auth::user()->type === 'organizer')
-    <!-- Navbar for Organizer -->
-    <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white justify-items-center">
-        <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnifylogo.png') }}" alt="Logo"
-                width="50"></a>
-        <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnify.png') }}" alt="Logo"
-                height="30"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                @if($isMember)
+    @if (Auth::check() && Auth::user()->type === 'organizer')
+        <!-- Navbar for Organizer -->
+        <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white justify-items-center">
+            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnifylogo.png') }}" alt="Logo"
+                    width="50"></a>
+            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnify.png') }}" alt="Logo"
+                    height="30"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    @if ($isMember)
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-warning" style="color: black; font-weight: bolder;"
+                                href="{{ route('chat.view', ['org_id' => $orgid]) }}"><i
+                                    class="fas fa-comments"></i>&nbsp; Chat</a>
+                        </li>
+                    @endif
+                </ul>
+
+                @php
+                    $user = session('user');
+                @endphp
+                <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link btn btn-warning" style="color: black; font-weight: bolder;" href="{{ route('chat.view', ['org_id' => $orgid]) }}"><i class="fas fa-comments"></i>&nbsp; Chat</a>
-                    </li>
-                @endif
-            </ul>
-
-            @php
-                $user = session('user');
-            @endphp
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item">
-                    <a class="nav-link" 
-                       href="{{ auth()->check() && auth()->user()->type === 'organizer' ? route('organization.show', ['id' => optional(auth()->user()->schoolOrganizations()->first())->id]) : route('organizer-home') }}" 
-                       style="{{ request()->routeIs('organization.show') || request()->routeIs('organizer-home') ? 'border-bottom: 2px solid #ffaa00a9; color: #ff7b00;' : '' }}">
-                        Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" 
-                       href="{{ route('organizer-home-all') }}" 
-                       style="{{ request()->routeIs('organizer-home-all') ? 'border-bottom: 2px solid #ffaa00a9; color: #ff7b00;' : '' }}">
-                       All Organizations
-                    </a>
-                </li>
-            </ul>
-
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        @if($user)
-                            <span style="margin-right: 10px;">{{ $user->firstname }} </span>
-                            @if(Auth::check() && Auth::user()->photo)
-                                <img src="{{ asset('profile-imgs/' . Auth::user()->photo) }}" alt="Profile Picture"
-                                     class="rounded-circle" style="width: 30px; height: 30px;">
-                            @else
-                                <img src="{{ asset('profile-imgs/defaultpfp.png') }}" alt="Profile Picture"
-                                     class="rounded-circle" style="width: 30px; height: 30px;">
-                            @endif
-                        @else
-                            User not logged in
-                        @endif
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ route('profile.show') }}">
-                            <i class="fas fa-user"></i> &nbsp;&nbsp; Account Profile
+                        <a class="nav-link"
+                            href="{{ auth()->check() && auth()->user()->type === 'organizer' ? route('organization.show', ['id' => optional(auth()->user()->schoolOrganizations()->first())->id]) : route('organizer-home') }}"
+                            style="{{ request()->routeIs('organization.show') || request()->routeIs('organizer-home') ? 'border-bottom: 2px solid #ffaa00a9; color: #ff7b00;' : '' }}">
+                            Home
                         </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                            style="color: red;"><i class="fas fa-sign-out-alt"></i>&nbsp;&nbsp; Sign out</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div>
-            Organization
-        </div>
-    </nav>
-
-@elseif(Auth::check() && Auth::user()->type === 'member')
-    <!-- Navbar for Member -->
-    <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white justify-items-center">
-        <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnifylogo.png') }}" alt="Logo" width="50"></a>
-        <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnify.png') }}" alt="Logo" height="30"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-                @if($isMember)
+                    </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-warning" style="color: black; font-weight: bolder;" href="{{ route('chat.view', ['org_id' => $orgid]) }}"><i class="fas fa-comments"></i>&nbsp; Chat</a>
-                    </li>
-                @endif
-            </ul>
-            @php
-                $user = session('user');
-            @endphp
-           
-
-            <ul class="navbar-nav ml-auto">
-               
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        @if($user)
-                            <span style="margin-right: 10px;">{{ $user->firstname }} </span>
-                            @if(Auth::check() && Auth::user()->photo)
-                                <img src="{{ asset('profile-imgs/' . Auth::user()->photo) }}" alt="Profile Picture"
-                                    class="rounded-circle" style="width: 30px; height: 30px;">
-                            @else
-                                <img src="{{ asset('profile-imgs/defaultpfp.png') }}" alt="Profile Picture"
-                                    class="rounded-circle" style="width: 30px; height: 30px;">
-                            @endif
-                        @else
-                            User not logged in
-                        @endif
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ route('profile.show') }}">
-                            <i class="fas fa-user"></i> &nbsp;&nbsp; Account Profile
+                        <a class="nav-link" href="{{ route('organizer-home-all') }}"
+                            style="{{ request()->routeIs('organizer-home-all') ? 'border-bottom: 2px solid #ffaa00a9; color: #ff7b00;' : '' }}">
+                            All Organizations
                         </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                            style="color: red;"><i class="fas fa-sign-out-alt"></i>&nbsp;&nbsp; Sign out</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div>
-            Student
-        </div>
-    </nav>
-@endif
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @if ($user)
+                                <span style="margin-right: 10px;">{{ $user->firstname }} </span>
+                                @if (Auth::check() && Auth::user()->photo)
+                                    <img src="{{ asset('profile-imgs/' . Auth::user()->photo) }}" alt="Profile Picture"
+                                        class="rounded-circle" style="width: 30px; height: 30px;">
+                                @else
+                                    <img src="{{ asset('profile-imgs/defaultpfp.png') }}" alt="Profile Picture"
+                                        class="rounded-circle" style="width: 30px; height: 30px;">
+                                @endif
+                            @else
+                                User not logged in
+                            @endif
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ route('profile.show') }}">
+                                <i class="fas fa-user"></i> &nbsp;&nbsp; Account Profile
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                style="color: red;"><i class="fas fa-sign-out-alt"></i>&nbsp;&nbsp; Sign out</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                Organization
+            </div>
+        </nav>
+    @elseif(Auth::check() && Auth::user()->type === 'member')
+        <!-- Navbar for Member -->
+        <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white justify-items-center">
+            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnifylogo.png') }}" alt="Logo"
+                    width="50"></a>
+            <a class="navbar-brand" href="#"><img src="{{ asset('images/PSUnify.png') }}" alt="Logo"
+                    height="30"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    @if ($isMember)
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-warning" style="color: black; font-weight: bolder;"
+                                href="{{ route('chat.view', ['org_id' => $orgid]) }}"><i
+                                    class="fas fa-comments"></i>&nbsp; Chat</a>
+                        </li>
+                    @endif
+                </ul>
+                @php
+                    $user = session('user');
+                @endphp
 
 
-<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-    @csrf
-</form>
+                <ul class="navbar-nav ml-auto">
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @if ($user)
+                                <span style="margin-right: 10px;">{{ $user->firstname }} </span>
+                                @if (Auth::check() && Auth::user()->photo)
+                                    <img src="{{ asset('profile-imgs/' . Auth::user()->photo) }}"
+                                        alt="Profile Picture" class="rounded-circle"
+                                        style="width: 30px; height: 30px;">
+                                @else
+                                    <img src="{{ asset('profile-imgs/defaultpfp.png') }}" alt="Profile Picture"
+                                        class="rounded-circle" style="width: 30px; height: 30px;">
+                                @endif
+                            @else
+                                User not logged in
+                            @endif
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ route('profile.show') }}">
+                                <i class="fas fa-user"></i> &nbsp;&nbsp; Account Profile
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                style="color: red;"><i class="fas fa-sign-out-alt"></i>&nbsp;&nbsp; Sign out</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                Student
+            </div>
+        </nav>
+    @endif
+
+
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
 
 
 
     <!-- content ditooo -->
     <div class="container mt-4">
-      
+
 
         <div class="cover-photo">
-            
-     
-                        <!-- <a class="nav-link btn btn-warning" href="{{ route('member-home-all') }}"><i class="fas fa-arrow-left"></i>&nbsp; Back</a> -->
-
-                        @if(Auth::check() && Auth::user()->type === 'organizer' && !(optional(auth()->user()->schoolOrganizations()->first())->id === optional($orgid)->id))
 
 
-                        <a href="{{ route('organizer-home-all') }}" class="{{ strtolower($user->type) === 'organizer' ? 'btn btn-warning back-button' : 'btn btn-primary back-button' }}"><i class="fas fa-arrow-left"></i>&nbsp; Back</a>
-                         
-@elseif(Auth::check() && Auth::user()->type === 'member')
-                        <a href="{{ route('member-home') }}" class="{{ strtolower($user->type) === 'organizer' ? 'btn btn-warning back-button' : 'btn btn-primary back-button' }}"><i class="fas fa-arrow-left"></i>&nbsp; Back</a>
-     @endif
+            <!-- <a class="nav-link btn btn-warning" href="{{ route('member-home-all') }}"><i class="fas fa-arrow-left"></i>&nbsp; Back</a> -->
+
+            @if (Auth::check() &&
+                    Auth::user()->type === 'organizer' &&
+                    !(optional(auth()->user()->schoolOrganizations()->first())->id === optional($orgid)->id))
+                <a href="{{ route('organizer-home-all') }}"
+                    class="{{ strtolower($user->type) === 'organizer' ? 'btn btn-warning back-button' : 'btn btn-primary back-button' }}"><i
+                        class="fas fa-arrow-left"></i>&nbsp; Back</a>
+            @elseif(Auth::check() && Auth::user()->type === 'member')
+                <a href="{{ route('member-home') }}"
+                    class="{{ strtolower($user->type) === 'organizer' ? 'btn btn-warning back-button' : 'btn btn-primary back-button' }}"><i
+                        class="fas fa-arrow-left"></i>&nbsp; Back</a>
+            @endif
 
 
             <div class="org-info">
-                <div class="org-name">{{ $orgname}} 
-                @if(auth()->check() && optional(auth()->user()->schoolOrganizations()->first())->id === $orgid->id)<span style="font-size: 1.5rem; font-style:italic; font-weight:semi-bold; color:rgb(255, 187, 0)">(You)</span> @endif
-                @php
-    $isAdmin = false;
-    $userType = null;
+                <div class="org-name">{{ $orgname }}
+                    @if (auth()->check() && optional(auth()->user()->schoolOrganizations()->first())->id === $orgid->id)
+                        <span
+                            style="font-size: 1.5rem; font-style:italic; font-weight:semi-bold; color:rgb(255, 187, 0)">(You)</span>
+                    @endif
+                    @php
+                        $isAdmin = false;
+                        $userType = null;
 
                         if (Auth::check()) {
                             $userId = Auth::id();
@@ -203,26 +214,24 @@
                                 ->where('admin_id', $userId)
                                 ->exists();
 
-        $userType = DB::table('users')
-            ->where('id', $userId)
-            ->value('type');
-    }
-@endphp
-<!-- JOIN ORGANIZATION -->
-@if (!$isMember && !$isAdmin && $userType === 'member')
-    <span id="join-section">
-        @php
-            $isMember = \App\Models\OrganizationMember::where('organization_id', $orgid->id)
-                ->where('member_id', Auth::id())
-                ->exists();
-        @endphp
-        <!-- <a href="javascript:void(0);" onclick="toggleJoin({{ $orgid->id }})">
+                            $userType = DB::table('users')->where('id', $userId)->value('type');
+                        }
+                    @endphp
+                    <!-- JOIN ORGANIZATION -->
+                    @if (!$isMember && !$isAdmin && $userType === 'member')
+                        <span id="join-section">
+                            @php
+                                $isMember = \App\Models\OrganizationMember::where('organization_id', $orgid->id)
+                                    ->where('member_id', Auth::id())
+                                    ->exists();
+                            @endphp
+                            <!-- <a href="javascript:void(0);" onclick="toggleJoin({{ $orgid->id }})">
             <button id="join-button" class="btn btn-{{ $isMember ? 'secondary' : 'success' }}">
                 {{ $isMember ? 'PENDING' : 'JOIN' }}
             </button>
         </a> -->
-    </span>
-@endif
+                        </span>
+                    @endif
 
                 </div>
                 <div class="org-type">{{ $orgid->course }}</div>
@@ -230,7 +239,7 @@
 
         </div>
 
-        
+
 
         <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
             <li class="nav-item">
@@ -263,21 +272,21 @@
                         ->where('status', 'approved')
                         ->exists();
 
-        if (!$isMember) {
-            $isAdmin = DB::table('school_organizations')
-                ->where('id', $organization->id)
-                ->where('admin_id', $userId)
-                ->exists();
-            $isMember = $isAdmin;
-        }
-    }
-@endphp
+                    if (!$isMember) {
+                        $isAdmin = DB::table('school_organizations')
+                            ->where('id', $organization->id)
+                            ->where('admin_id', $userId)
+                            ->exists();
+                        $isMember = $isAdmin;
+                    }
+                }
+            @endphp
             <!-- MEMBER TAB BUTTON -->
-            @if($isMember)
-            <li class="nav-item">
-                <a class="nav-link" id="members-tab" data-toggle="tab" href="#members" role="tab" aria-controls="members"
-                    aria-selected="false">Members</a>
-            </li>
+            @if ($isMember)
+                <li class="nav-item">
+                    <a class="nav-link" id="members-tab" data-toggle="tab" href="#members" role="tab"
+                        aria-controls="members" aria-selected="false">Members</a>
+                </li>
             @endif
 
             @php
@@ -381,17 +390,19 @@
                                         <textarea name="content" class="form-control" rows="3" placeholder="Post new update..." required></textarea>
                                     </div>
 
-                                <div class="form-group mt-3">
-    <label for="taggedOrg_id">Tag Another Organization (Optional):</label>
-    <select name="taggedOrg_id" id="taggedOrg_id" class="form-control">
-        <option value="" selected>No Tag</option>
-        @foreach($organizations as $organizationN)
-            @if($organizationN->admin_id !== Auth::id()) <!-- Exclude organization owned by the current user -->
-                <option value="{{ $organizationN->id }}">{{ $organizationN->orgname }}</option>
-            @endif
-        @endforeach
-    </select>
-</div>
+                                    <div class="form-group mt-3">
+                                        <label for="taggedOrg_id">Tag Another Organization (Optional):</label>
+                                        <select name="taggedOrg_id" id="taggedOrg_id" class="form-control">
+                                            <option value="" selected>No Tag</option>
+                                            @foreach ($organizations as $organizationN)
+                                                @if ($organizationN->admin_id !== Auth::id())
+                                                    <!-- Exclude organization owned by the current user -->
+                                                    <option value="{{ $organizationN->id }}">
+                                                        {{ $organizationN->orgname }}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
 
 
                                     <div
@@ -482,30 +493,38 @@
                                         <div>
                                             {{-- <div class="page-name">{{ $organization->orgname }}</div> --}}
                                             @php
-                                            // Fetch the tagged organization
-                                            $taggedOrg = App\Models\SchoolOrganization::find($post->withTag);
-                                        @endphp
-                                        
-                                        @if($post->withTag)
-                                            @if($organization->id == $post->organization_id)
-                                                <!-- Current organization is the primary organization (ORG A) -->
-                                                <div class="page-name">{{ $organization->orgname }} <span>with</span> {{ $taggedOrg->orgname }}</div>
+                                                // Fetch the tagged organization
+                                                $taggedOrg = App\Models\SchoolOrganization::find($post->withTag);
+                                            @endphp
 
-                                            @elseif($organization->id == $post->withTag)
-                                                <!-- Current organization is the tagged organization (ORG B) -->
-                                                <div class="page-name">{{ $organization->orgname }} with {{ $organization->orgname }}</div>
+                                            @if ($post->withTag)
+                                                @if ($organization->id == $post->organization_id)
+                                                    <!-- Current organization is the primary organization (ORG A) -->
+                                                    <div class="page-name">{{ $organization->orgname }}
+                                                        <span>with</span> {{ $taggedOrg->orgname }}
+                                                    </div>
+                                                @elseif($organization->id == $post->withTag)
+                                                    <!-- Current organization is the tagged organization (ORG B) -->
+                                                    <div class="page-name">{{ $organization->orgname }} with
+                                                        {{ $organization->orgname }}</div>
+                                                @endif
+                                            @else
+                                                <div class="page-name">{{ $organization->orgname }}</div>
                                             @endif
-                                        @else
-                                            <div class="page-name">{{ $organization->orgname }}</div>
-                                        @endif
-                                            <div class="posted-date">{{ $post->created_at->format('F j, Y, g:i a') }} <span>・{{ $post->privacy }}</span></div>
+                                            <div class="posted-date">{{ $post->created_at->format('F j, Y, g:i a') }}
+                                                <span>・{{ $post->privacy }}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    @if($user->type == "organizer" && (optional(auth()->user()->schoolOrganizations()->first())->id === optional($orgid)->id))
-                                    <div>
-                                        <a href="#" class="btn btn-warning edit-post" data-toggle="modal" data-target="#editPostModal"><i class="fas fa-edit"></i></a>
-                                        <a href="{{ route('post.delete', $post->id) }}" class="btn btn-danger delete-post" onclick="return confirm('Are you sure you want to delete this post?');"><i class="fas fa-trash"></i></a>
-                                    </div>
+                                    @if ($user->type == 'organizer' && optional(auth()->user()->schoolOrganizations()->first())->id === optional($orgid)->id)
+                                        <div>
+                                            <a href="#" class="btn btn-warning edit-post" data-toggle="modal"
+                                                data-target="#editPostModal"><i class="fas fa-edit"></i></a>
+                                            <a href="{{ route('post.delete', $post->id) }}"
+                                                class="btn btn-danger delete-post"
+                                                onclick="return confirm('Are you sure you want to delete this post?');"><i
+                                                    class="fas fa-trash"></i></a>
+                                        </div>
                                     @endif
                                 </div>
                                 <div class="post-content">
@@ -536,82 +555,98 @@
 
                                 </div>
                             </div>
-                            @elseif($post->type == 'withphoto')
-    <div class="post-container">
-        <div class="post-header d-flex justify-content-between align-items-center">
-            <div class="post-header">
-                <img src="{{ asset('cover-photos/' . $organization->coverphoto) }}" alt="Profile Picture">
-                <div>
-                    @php
-                    // Fetch the tagged organization
-                    $taggedOrg = App\Models\SchoolOrganization::find($post->withTag);
-                    @endphp
-                    
-                    @if($post->withTag)
-                        @if($organization->id == $post->organization_id)
-                            <!-- Current organization is the primary organization (ORG A) -->
-                            <div class="page-name">{{ $organization->orgname }} <span>with</span> {{ $taggedOrg->orgname }}</div>
-                        @elseif($organization->id == $post->withTag)
-                            <!-- Current organization is the tagged organization (ORG B) -->
-                            <div class="page-name">{{ $organization->orgname }} with {{ $organization->orgname }}</div>
+                        @elseif($post->type == 'withphoto')
+                            <div class="post-container">
+                                <div class="post-header d-flex justify-content-between align-items-center">
+                                    <div class="post-header">
+                                        <img src="{{ asset('cover-photos/' . $organization->coverphoto) }}"
+                                            alt="Profile Picture">
+                                        <div>
+                                            @php
+                                                // Fetch the tagged organization
+                                                $taggedOrg = App\Models\SchoolOrganization::find($post->withTag);
+                                            @endphp
+
+                                            @if ($post->withTag)
+                                                @if ($organization->id == $post->organization_id)
+                                                    <!-- Current organization is the primary organization (ORG A) -->
+                                                    <div class="page-name">{{ $organization->orgname }}
+                                                        <span>with</span> {{ $taggedOrg->orgname }}
+                                                    </div>
+                                                @elseif($organization->id == $post->withTag)
+                                                    <!-- Current organization is the tagged organization (ORG B) -->
+                                                    <div class="page-name">{{ $organization->orgname }} with
+                                                        {{ $organization->orgname }}</div>
+                                                @endif
+                                            @else
+                                                <div class="page-name">{{ $organization->orgname }}</div>
+                                            @endif
+                                            <div class="posted-date">{{ $post->created_at->format('F j, Y, g:i a') }}
+                                                <span>・{{ $post->privacy }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if ($user->type == 'organizer' && optional(auth()->user()->schoolOrganizations()->first())->id === optional($orgid)->id)
+                                        <div>
+                                            <a href="#" class="btn btn-warning edit-post" data-toggle="modal"
+                                                data-target="#editPostModalWithPhoto"
+                                                data-post-id="{{ $post->id }}"
+                                                data-post-content="{{ $post->content }}"
+                                                data-post-photos="{{ $post->photos }}">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{{ route('post.delete', $post->id) }}"
+                                                class="btn btn-danger delete-post"
+                                                onclick="return confirm('Are you sure you want to delete this post?');"><i
+                                                    class="fas fa-trash"></i></a>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="post-content">
+                                    {{ $post->content }}
+                                </div>
+                                <div class="row">
+                                    @foreach ($post->photos as $photo)
+                                        <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                            <a href="{{ asset('post-imgs/' . $photo->photo_filename) }}"
+                                                target="_blank">
+                                                <img src="{{ asset('post-imgs/' . $photo->photo_filename) }}"
+                                                    class="img-fluid mb-4" alt="Photo"
+                                                    style="object-fit: contain; height: 200px; border-radius: 20px; padding: 10px; background-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+
+                                <div class="post-numbers">
+                                    <div>{{ $post->reactions_count }} Likes</div>
+                                    <div>{{ $post->comments_count }} Comments</div>
+                                </div>
+
+                                <div class="post-actions">
+                                    @php
+                                        $userLiked = $post->reactions->contains('user_id', Auth::id());
+                                    @endphp
+
+                                    <form action="{{ route('posts.like', $post->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="post-action-btn"
+                                            style="color: {{ $userLiked ? 'blue' : 'black' }}">
+                                            <i class="fas fa-thumbs-up"></i>&nbsp; Like
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('posts.comments', $post->id) }}" method="GET">
+                                        <button type="submit" class="post-action-btn">
+                                            <i class="fas fa-comment"></i>&nbsp; Comment
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         @endif
-                    @else
-                        <div class="page-name">{{ $organization->orgname }}</div>
-                    @endif
-                    <div class="posted-date">{{ $post->created_at->format('F j, Y, g:i a') }} <span>・{{ $post->privacy }}</span></div>
-                </div>
-            </div>
-
-            @if($user->type == "organizer" && (optional(auth()->user()->schoolOrganizations()->first())->id === optional($orgid)->id))
-            <div>
-                <a href="#" class="btn btn-warning edit-post" data-toggle="modal" data-target="#editPostModalWithPhoto" data-post-id="{{ $post->id }}" data-post-content="{{ $post->content }}" data-post-photos="{{ $post->photos }}">
-                    <i class="fas fa-edit"></i>
-                </a>
-                <a href="{{ route('post.delete', $post->id) }}" class="btn btn-danger delete-post" onclick="return confirm('Are you sure you want to delete this post?');"><i class="fas fa-trash"></i></a>
-            </div>
-            @endif
-        </div>
-
-        <div class="post-content">
-            {{ $post->content }}
-        </div>
-        <div class="row">
-    @foreach($post->photos as $photo)
-        <div class="col-md-4 d-flex justify-content-center align-items-center">
-            <a href="{{ asset('storage/post-imgs/' . $photo->photo_filename) }}" target="_blank">
-                <img src="{{ asset('storage/post-imgs/' . $photo->photo_filename) }}" class="img-fluid mb-4"
-                    alt="Photo" style="object-fit: contain; height: 200px; border-radius: 20px; padding: 10px; background-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-            </a>
-        </div>
-    @endforeach
-</div>
-
-
-        <div class="post-numbers">
-            <div>{{ $post->reactions_count }} Likes</div>
-            <div>{{ $post->comments_count }} Comments</div>
-        </div>
-
-        <div class="post-actions">
-        @php
-            $userLiked = $post->reactions->contains('user_id', Auth::id());
-        @endphp
-
-        <form action="{{ route('posts.like', $post->id) }}" method="POST">
-            @csrf
-            <button type="submit" class="post-action-btn" style="color: {{ $userLiked ? 'blue' : 'black' }}">
-                <i class="fas fa-thumbs-up"></i>&nbsp; Like
-            </button>
-        </form>
-
-        <form action="{{ route('posts.comments', $post->id) }}" method="GET">
-            <button type="submit" class="post-action-btn">
-                <i class="fas fa-comment"></i>&nbsp; Comment
-            </button>
-        </form>
-        </div>
-    </div>
-@endif
 
                     @endforeach
                 </div>
@@ -902,60 +937,70 @@
 
 
             <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
-            <div class="container mt-5">
-    <div class="card rounded-lg shadow p-4 mb-4">
-        <div class="card-body">
-        <ul class="list-unstyled mb-0">
-            <li class="mb-2"><i class="fas fa-building mr-2"></i>Name: <b>{{ $organization->orgname }}</b></li>
-<li class="mb-2"><i class="fas fa-book mr-2"></i>Program: <b>{{ $organization->course }}</b></li>
-<li class="mb-2"><i class="fas fa-info-circle mr-2"></i>Bio: <b>{{ $organization->bio }}</b></li>
-<li class="mb-2"><i class="fas fa-bullseye mr-2"></i>Mission: <b>{{ $organization->mission }}</b></li>
-<li class="mb-2"><i class="fas fa-bullseye mr-2"></i>Vision: <b>{{ $organization->vision }}</b></li>
+                <div class="container mt-5">
+                    <div class="card rounded-lg shadow p-4 mb-4">
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2"><i class="fas fa-building mr-2"></i>Name:
+                                    <b>{{ $organization->orgname }}</b>
+                                </li>
+                                <li class="mb-2"><i class="fas fa-book mr-2"></i>Program:
+                                    <b>{{ $organization->course }}</b>
+                                </li>
+                                <li class="mb-2"><i class="fas fa-info-circle mr-2"></i>Bio:
+                                    <b>{{ $organization->bio }}</b>
+                                </li>
+                                <li class="mb-2"><i class="fas fa-bullseye mr-2"></i>Mission:
+                                    <b>{{ $organization->mission }}</b>
+                                </li>
+                                <li class="mb-2"><i class="fas fa-bullseye mr-2"></i>Vision:
+                                    <b>{{ $organization->vision }}</b>
+                                </li>
 
-    <!-- <li><i class="fas fa-phone mr-2"></i> -->
-    @if($organization->contact)
-    <li class="mt-2">
-        <i class="fas fa-phone mr-2"></i>
-        <a href="tel:{{ $organization->contact }}">{{ $organization->contact }}</a>
-    </li>
-@endif
+                                <!-- <li><i class="fas fa-phone mr-2"></i> -->
+                                @if ($organization->contact)
+                                    <li class="mt-2">
+                                        <i class="fas fa-phone mr-2"></i>
+                                        <a href="tel:{{ $organization->contact }}">{{ $organization->contact }}</a>
+                                    </li>
+                                @endif
 
-@if($organization->facebook)
-    <li class="mt-2">
-        <i class="fab fa-facebook mr-2"></i>
-        <a href="{{ $organization->facebook }}" target="_blank">Facebook</a>
-    </li>
-@endif
+                                @if ($organization->facebook)
+                                    <li class="mt-2">
+                                        <i class="fab fa-facebook mr-2"></i>
+                                        <a href="{{ $organization->facebook }}" target="_blank">Facebook</a>
+                                    </li>
+                                @endif
 
-@if($organization->instagram)
-    <li class="mt-2">
-        <i class="fab fa-instagram mr-2"></i>
-        <a href="{{ $organization->instagram }}" target="_blank">Instagram</a>
-    </li>
-@endif
+                                @if ($organization->instagram)
+                                    <li class="mt-2">
+                                        <i class="fab fa-instagram mr-2"></i>
+                                        <a href="{{ $organization->instagram }}" target="_blank">Instagram</a>
+                                    </li>
+                                @endif
 
-@if($organization->twitter)
-    <li class="mt-2">
-        <i class="fab fa-twitter mr-2"></i>
-        <a href="{{ $organization->twitter }}" target="_blank">Twitter</a>
-    </li>
-@endif
+                                @if ($organization->twitter)
+                                    <li class="mt-2">
+                                        <i class="fab fa-twitter mr-2"></i>
+                                        <a href="{{ $organization->twitter }}" target="_blank">Twitter</a>
+                                    </li>
+                                @endif
 
-@if($organization->tiktok)
-    <li class="mt-2">
-        <i class="fab fa-tiktok mr-2"></i>
-        <a href="{{ $organization->tiktok }}" target="_blank">TikTok</a>
-    </li>
-@endif
+                                @if ($organization->tiktok)
+                                    <li class="mt-2">
+                                        <i class="fab fa-tiktok mr-2"></i>
+                                        <a href="{{ $organization->tiktok }}" target="_blank">TikTok</a>
+                                    </li>
+                                @endif
 
-@if($organization->youtube)
-    <li class="mt-2">
-        <i class="fab fa-youtube mr-2"></i>
-        <a href="{{ $organization->youtube }}" target="_blank">YouTube</a>
-    </li>
-@endif
+                                @if ($organization->youtube)
+                                    <li class="mt-2">
+                                        <i class="fab fa-youtube mr-2"></i>
+                                        <a href="{{ $organization->youtube }}" target="_blank">YouTube</a>
+                                    </li>
+                                @endif
 
-</ul>
+                            </ul>
 
                         </div>
                     </div>
@@ -969,12 +1014,12 @@
                             @continue
                         @endif
                         <div class="col-md-3 d-flex justify-content-center align-items-center">
-    <a href="{{ asset('storage/post-imgs/' . $photo->photo_filename) }}" target="_blank">
-        <img src="{{ asset('storage/post-imgs/' . $photo->photo_filename) }}" class="img-fluid mb-4"
-            alt="Photo" style="object-fit: contain; height: 200px; border-radius: 20px; padding: 10px; background-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-    </a>
-</div>
-
+                            <a href="{{ asset('post-imgs/' . $photo->photo_filename) }}" target="_blank">
+                                <img src="{{ asset('post-imgs/' . $photo->photo_filename) }}" class="img-fluid mb-4"
+                                    alt="Photo"
+                                    style="object-fit: contain; height: 200px; border-radius: 20px; padding: 10px; background-color: white; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                            </a>
+                        </div>
                     @endforeach
                 </div>
                 <br><br><br>
@@ -985,8 +1030,8 @@
             <div class="tab-pane fade" id="officers" role="tabpanel" aria-labelledby="members-tab">
                 <div class="container mt-5">
 
-                    {{-- CHECKS IF ORG AND USER--}}
-                    @if ($user->type == 'organizer') 
+                    {{-- CHECKS IF ORG AND USER --}}
+                    @if ($user->type == 'organizer')
                         <a href="#" class="" data-toggle="modal" data-target="#addOfficerModal">
                             <button type="button" class="btn btn-primary mb-4">Add officer</button>
                         </a>
@@ -1003,26 +1048,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php 
-                            $officers = DB::table('officers')
-                                ->where('from_organization_id', $organization->id)
-                                ->get();
+                            @php
+                                $officers = DB::table('officers')
+                                    ->where('from_organization_id', $organization->id)
+                                    ->get();
                             @endphp
                             @foreach ($officers as $officer)
                                 <tr>
                                     <td>{{ $officer->officer_first_name }} {{ $officer->officer_last_name }}</td>
                                     <td>{{ $officer->position }}</td>
                                     <td>{{ $officer->officer_contact }}</td>
-                                    
-                                    {{-- CHECKS IF ORG AND USER--}}
+
+                                    {{-- CHECKS IF ORG AND USER --}}
                                     @if ($user->type == 'organizer')
                                         <td>
-                                            <form
-                                                action="{{ route('officer.delete', ['id' => $officer->id])}}"
+                                            <form action="{{ route('officer.delete', ['id' => $officer->id]) }}"
                                                 method="POST">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="btn btn-danger"> 
+                                                <button type="submit" class="btn btn-danger">
                                                     <i class="fa fa-remove"></i> Remove officer
                                                 </button>
                                             </form>
@@ -1054,7 +1098,8 @@
                                 <div class="container-fluid bg-light p-3">
                                     <div class="row">
                                         <div class="col">
-                                            <input type="hidden" name="from_organization_id" value="{{ $organization->id }}" required>
+                                            <input type="hidden" name="from_organization_id"
+                                                value="{{ $organization->id }}" required>
                                             <div class="mb-3">
                                                 <label for="officer_first_name" class="form-label">First Name:</label>
                                                 <input type="text" class="form-control" id="officer_first_name"
@@ -1073,7 +1118,8 @@
                                             <div class="mb-3">
                                                 <label for="officer_contact" class="form-label">Contact:</label>
                                                 <input type="text" class="form-control" id="officer_contact"
-                                                    name="officer_contact" placeholder="Enter contact details" required>
+                                                    name="officer_contact" placeholder="Enter contact details"
+                                                    required>
                                             </div>
                                         </div>
                                     </div>
@@ -1091,8 +1137,14 @@
 
             @if ($isMember)
                 <div class="tab-pane fade" id="members" role="tabpanel" aria-labelledby="members-tab">
-                    <div class="container mt-5">
+                    <div class="container mt-2">
                         @if ($user->type == 'organizer')
+                            <div style="display: flex; justify-content: flex-start; ">
+                                <!-- Trigger the modal with a button -->
+                                <button class="btn btn-warning mb-3" data-toggle="modal"
+                                    data-target="#addMemberModal"><i class="fa fa-user"></i> Add Member</button>
+                                <!-- <button class="btn btn-success ml-2 mb-3">Bulk add</button> -->
+                            </div>
                             <table id="membersTable" class="table table-striped table-bordered" style="width:100%">
                                 <thead>
                                     <tr>
@@ -1100,8 +1152,10 @@
                                         <th>Student ID</th>
                                         <th>Full Name</th>
                                         <th>Email</th>
+                                        <th>Payment</th>
                                         <th>Status</th>
                                         <th>Action</th>
+                                        <!-- <th>Action</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1116,10 +1170,7 @@
                                             <td>{{ $member->firstname }} {{ $member->middlename }}
                                                 {{ $member->lastname }}</td>
                                             <td>{{ $member->email }}</td>
-                                            <td>
-                                                <button
-                                                    class="{{ strtolower($member->status) === 'approved' ? 'btn btn-outline-success' : (strtolower($member->status) === 'rejected' ? 'btn btn-outline-danger' : 'btn btn-outline-secondary') }}">{{ $member->status }}</button>
-                                            </td>
+                                            <td>{{ $member->payment_status }}</td>
                                             <td>
                                                 <form
                                                     action="{{ route('organization.toggleMember', ['id' => $orgid->id, 'member_id' => $member->id]) }}"
@@ -1127,17 +1178,97 @@
                                                     @csrf
                                                     @method('PUT')
                                                     <button type="submit"
-                                                        class="btn btn-{{ $member->status === 'approved' ? 'danger' : 'success' }}">
+                                                        class="btn btn-{{ $member->status === 'approved' ? 'success' : 'dark' }}">
                                                         <i
                                                             class="fas fa-toggle-{{ $member->status === 'approved' ? 'off' : 'on' }}"></i>
-                                                        {{ $member->status === 'approved' ? 'Disable access' : 'Enable access' }}
+                                                        {{ $member->status === 'approved' ? 'Active' : 'Disabled' }}
                                                     </button>
                                                 </form>
                                             </td>
+                                            <td style="text-align: center; vertical-align: top;">
+                                                <form
+                                                    action="{{ route('organization.deleteMember', ['org_id' => $orgid->id, 'member_id' => $member->id]) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Are you sure you want to delete this member?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </form>
+
+
+                                            </td>
+
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
+                            <!-- MEMBER ADD MODAL -->
+
+                            <div class="modal fade" id="addMemberModal" tabindex="-1" role="dialog"
+                                aria-labelledby="addMemberModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="addMemberModalLabel">Add New Member</h5>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="text" value="{{ $orgid->id }}" id="organizationId"
+                                                style="display:none;">
+                                            <!-- Form Inputs -->
+                                            <div class="d-flex">
+                                                <label for="studentid" class="mr-2">Student ID</label>
+                                                <div id="studentid-error" class="text-danger" style="display:none;">
+                                                    No student found</div>
+                                            </div>
+
+                                            <div class="form-group d-flex align-items-center">
+                                                <input type="text" class="form-control mr-2" id="studentid"
+                                                    placeholder="Enter student id" required>
+                                                <button class="btn btn-info" id="checkStudentBtn">Check</button>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="payment_status">Payment Status</label>
+                                                <select class="form-control" id="payment_status">
+                                                    <option value="Half-year">Half-year</option>
+                                                    <option value="Full-year">Full-year</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="firstname">First Name</label>
+                                                <input type="text" class="form-control" id="firstname" readonly
+                                                    required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="middlename">Middle Name</label>
+                                                <input type="text" class="form-control" id="middlename" readonly>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="lastname">Last Name</label>
+                                                <input type="text" class="form-control" id="lastname" readonly
+                                                    required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="contact">Contact</label>
+                                                <input type="text" class="form-control" id="contact" readonly
+                                                    required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-success"
+                                                id="addMemberBtn">Add</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         @else
                             <table id="membersTable" class="table table-striped table-bordered" style="width:100%">
                                 <thead>
@@ -1160,7 +1291,7 @@
                                                 {{ $member->lastname }}</td>
                                             <td>{{ $member->email }}</td>
                                             <td>
-                                                @if ($member->id != $user->id)
+                                                @if ($member->member_id != Auth::id())
                                                     <a href="#" class="report-btn" data-toggle="modal"
                                                         data-target="#reportModal{{ $member->id }}">
                                                         <button class="btn btn-danger">
@@ -1212,6 +1343,29 @@
                                                                         <br>
                                                                         <p>Select one or more reasons why you want to
                                                                             report this user:</p>
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input"
+                                                                                type="checkbox" id="pretending"
+                                                                                name="reasons[]"
+                                                                                value="Pretending to be someone">
+                                                                            <label class="form-check-label"
+                                                                                for="pretending">Pretending to be
+                                                                                someone</label>
+                                                                        </div>
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input"
+                                                                                type="checkbox" id="fakename"
+                                                                                name="reasons[]" value="Fake name">
+                                                                            <label class="form-check-label"
+                                                                                for="fakename">Fake name</label>
+                                                                        </div>
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input"
+                                                                                type="checkbox" id="fakeaccount"
+                                                                                name="reasons[]" value="Fake account">
+                                                                            <label class="form-check-label"
+                                                                                for="fakeaccount">Fake account</label>
+                                                                        </div>
                                                                         <div class="form-check">
                                                                             <input class="form-check-input"
                                                                                 type="checkbox" id="inappropriate"
@@ -1386,13 +1540,13 @@
                             <div class="d-flex align-items-center ml-4">
                                 <div class="privacy-radio mt-2">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="privacy" id="privateRadio"
-                                            value="private" checked>
+                                        <input class="form-check-input" type="radio" name="privacy"
+                                            id="privateRadio" value="private" checked>
                                         <label class="form-check-label" for="privateRadio">Private</label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="privacy" id="publicRadio"
-                                            value="public">
+                                        <input class="form-check-input" type="radio" name="privacy"
+                                            id="publicRadio" value="public">
                                         <label class="form-check-label" for="publicRadio">Public</label>
                                     </div>
                                 </div>
@@ -1411,7 +1565,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="start_date">Start Date</label>
-                                    <input type="datetime-local" class="form-control" id="start_date" name="start_date"
+                                    <input type="datetime-local" class="form-control" id="start_date"
+                                        name="start_date"
                                         value="{{ date('Y-m-d\TH:i', strtotime($post->event_start_time)) }}" required>
                                 </div>
                                 <div class="form-group">
@@ -1449,13 +1604,13 @@
                             <div class="d-flex align-items-center ml-4">
                                 <div class="privacy-radio mt-2">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="privacy" id="privateRadio"
-                                            value="private" checked>
+                                        <input class="form-check-input" type="radio" name="privacy"
+                                            id="privateRadio" value="private" checked>
                                         <label class="form-check-label" for="privateRadio">Private</label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="privacy" id="publicRadio"
-                                            value="public">
+                                        <input class="form-check-input" type="radio" name="privacy"
+                                            id="publicRadio" value="public">
                                         <label class="form-check-label" for="publicRadio">Public</label>
                                     </div>
                                 </div>
@@ -1473,7 +1628,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="start_date">Start Date</label>
-                                    <input type="datetime-local" class="form-control" id="start_date" name="start_date"
+                                    <input type="datetime-local" class="form-control" id="start_date"
+                                        name="start_date"
                                         value="{{ date('Y-m-d\TH:i', strtotime($post->event_start_time)) }}">
                                 </div>
                                 <div class="form-group">
@@ -1529,84 +1685,84 @@
         </script>
 
 
-<!-- CHECKING STUDENT ADD MEMBER -->
+        <!-- CHECKING STUDENT ADD MEMBER -->
 
-<script>
-    $('#checkStudentBtn').on('click', function() {
-        var studentId = $('#studentid').val(); // Get the student ID from the input field
+        <script>
+            $('#checkStudentBtn').on('click', function() {
+                var studentId = $('#studentid').val(); // Get the student ID from the input field
 
-        $.ajax({
-            url: '/check-student/' + studentId,  // Make sure the full URL is used
-            method: 'GET',
-            success: function(response) {
-                console.log(response); // Log the response to see what is returned
+                $.ajax({
+                    url: '/check-student/' + studentId, // Make sure the full URL is used
+                    method: 'GET',
+                    success: function(response) {
+                        console.log(response); // Log the response to see what is returned
 
-                if (response.success) {
-                    // Fill in the input fields with student data
-                    $('#firstname').val(response.data.firstname);
-                    $('#middlename').val(response.data.middlename);
-                    $('#lastname').val(response.data.lastname);
-                    $('#contact').val(response.data.email);
+                        if (response.success) {
+                            // Fill in the input fields with student data
+                            $('#firstname').val(response.data.firstname);
+                            $('#middlename').val(response.data.middlename);
+                            $('#lastname').val(response.data.lastname);
+                            $('#contact').val(response.data.email);
 
-                    // Hide the error message if student is found
-                    $('#studentid-error').hide();
+                            // Hide the error message if student is found
+                            $('#studentid-error').hide();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+
+                        $('#studentid-error').show().text('account not found');
+                    }
+                });
+            });
+        </script>
+
+        <!-- MEMBER ADDING -->
+
+        <script>
+            $('#addMemberBtn').on('click', function() {
+                // Get values from the modal form
+                var studentId = $('#studentid').val();
+                var organizationId = $('#organizationId').val();
+                var paymentStatus = $('#payment_status').val();
+
+                // Combine first name, middle name, and last name into full nam
+
+                // Validate required fields
+                if (!studentId || !paymentStatus) {
+                    alert('All fields are required.');
+                    return;
                 }
-            },
-            error: function(xhr, status, error) {
-                
-                $('#studentid-error').show().text('account not found');
-            }
-        });
-    });
-</script>
 
-<!-- MEMBER ADDING -->
-
-<script>
-    $('#addMemberBtn').on('click', function() {
-        // Get values from the modal form
-        var studentId = $('#studentid').val();
-        var organizationId = $('#organizationId').val();
-        var paymentStatus = $('#payment_status').val();
-
-        // Combine first name, middle name, and last name into full nam
-
-        // Validate required fields
-        if (!studentId || !paymentStatus) {
-            alert('All fields are required.');
-            return;
-        }
-
-        // AJAX request to insert the data
-        $.ajax({
-            url: '/organization/add-member', // Adjust the URL as per your routes
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}', // Include CSRF token
-                studentid: studentId,
-                organization_id: organizationId,
-                payment_status: paymentStatus
-            },
-            success: function(response) {
-                if (response.success) {
-                    alert('Member added successfully!');
-                    $('#addMemberModal').modal('hide'); // Close the modal
-                    location.reload(); // Reload the page to update the table
-                } else {
-                    alert(response.message || 'Failed to add member.');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-                alert('An error occurred. Please try again.');
-            }
-        });
-    });
-</script>
+                // AJAX request to insert the data
+                $.ajax({
+                    url: '/organization/add-member', // Adjust the URL as per your routes
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // Include CSRF token
+                        studentid: studentId,
+                        organization_id: organizationId,
+                        payment_status: paymentStatus
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Member added successfully!');
+                            $('#addMemberModal').modal('hide'); // Close the modal
+                            location.reload(); // Reload the page to update the table
+                        } else {
+                            alert(response.message || 'Failed to add member.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+        </script>
 
 
 
-</script>
+        </script>
 
 
 
@@ -1669,57 +1825,56 @@
         </script>
 
 
-<script>
-    function toggleJoin(orgId) {
-    fetch(`/organization/${orgId}/toggleJoin`, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}', // Include CSRF token for security
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({}), // Send an empty payload if no additional data is needed
-    })
-    .then(response => response.json()) // Parse the JSON response
-    .then(data => {
-        // Handle the response based on the status
-        if (data.status === 'unjoined') {
-            Swal.fire({
-                title: 'Success',
-                text: data.message || 'You have successfully unjoined the organization.',
-                icon: 'success',
-            });
-        } else if (data.status === 'joined') {
-            Swal.fire({
-                title: 'Success',
-                text: data.message || 'You have successfully joined the organization.',
-                icon: 'success',
-            });
-        } else if (data.status === 'not_member') {
-            Swal.fire({
-                title: 'Not Allowed',
-                text: 'You are not in the list of members for this organization.',
-                icon: 'warning',
-            });
-        } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'An unexpected status was returned.',
-                icon: 'error',
-            });
-        }
-    })
-    .catch(error => {
-        // Handle any errors that occur during the fetch
-        console.error('Error:', error);
-        Swal.fire({
-            title: 'Error',
-            text: 'An error occurred. Please try again later.',
-            icon: 'error',
-        });
-    });
-}
-
-</script>
+        <script>
+            function toggleJoin(orgId) {
+                fetch(`/organization/${orgId}/toggleJoin`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}', // Include CSRF token for security
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({}), // Send an empty payload if no additional data is needed
+                    })
+                    .then(response => response.json()) // Parse the JSON response
+                    .then(data => {
+                        // Handle the response based on the status
+                        if (data.status === 'unjoined') {
+                            Swal.fire({
+                                title: 'Success',
+                                text: data.message || 'You have successfully unjoined the organization.',
+                                icon: 'success',
+                            });
+                        } else if (data.status === 'joined') {
+                            Swal.fire({
+                                title: 'Success',
+                                text: data.message || 'You have successfully joined the organization.',
+                                icon: 'success',
+                            });
+                        } else if (data.status === 'not_member') {
+                            Swal.fire({
+                                title: 'Not Allowed',
+                                text: 'You are not in the list of members for this organization.',
+                                icon: 'warning',
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'An unexpected status was returned.',
+                                icon: 'error',
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        // Handle any errors that occur during the fetch
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'An error occurred. Please try again later.',
+                            icon: 'error',
+                        });
+                    });
+            }
+        </script>
 
         <script>
             $(document).ready(function() {
@@ -1745,7 +1900,7 @@
         @endif
 
 
-        
+
         <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
         <script>
