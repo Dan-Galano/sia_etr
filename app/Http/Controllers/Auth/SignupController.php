@@ -19,7 +19,7 @@ class SignupController extends Controller
     }
 
     public function signupStudent(Request $request)
-    {
+    { 
         try {
             $request->validate([
                 'firstname' => 'required|string|max:255',

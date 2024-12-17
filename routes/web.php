@@ -7,6 +7,7 @@ use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\GeneralController;
+use App\Http\Controllers\OfficerController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReportController;
 use App\Models\SchoolOrganization;
@@ -54,7 +55,7 @@ Route::get('/signup', function () {
             // Redirect members to their home page
             return redirect()->route('member-home');
         }
-
+ 
         if ($user->type === 'organizer') {
             // Find the organization associated with the organizer
             $organization = SchoolOrganization::where('admin_id', $user->id)->first();
@@ -205,6 +206,8 @@ Route::post('/organization/{org_id}/chat/send', [GeneralController::class, 'send
 
 Route::post('/organization/{id}/toggleJoin', [MemberController::class, 'toggleJoin'])->name('organization.toggleJoin');
 
+Route::post('/officers', [OfficerController::class, 'store'])->name('officer.add');
+Route::put('/officers/{id}', [OfficerController::class, 'delete'])->name('officer.delete');
 
 Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
 Route::get('/export-reports-pdf/{orgId}', [ReportController::class, 'exportReportsPDF'])->name('export.reports.pdf');

@@ -285,7 +285,7 @@
     }
     }
 
-
+ 
     function logMemberFormValues() {
     var userType = document.getElementById('userTypeMember').value;
     var firstName = document.getElementById('firstname').value;
@@ -411,14 +411,15 @@ function logOrganizerFormValues() {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-            title: 'Error!',
-            text: 'An error occurred while processing your request.',
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
+    console.error('Error:', error);
+    Swal.fire({
+        title: 'Error!',
+        text: 'An error occurred while processing your request: ' + error.message,
+        icon: 'error',
+        confirmButtonText: 'OK'
     });
+});
+
 }
 
 
