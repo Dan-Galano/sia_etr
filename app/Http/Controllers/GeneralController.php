@@ -306,14 +306,18 @@ class GeneralController extends Controller
         $primaryPost = $createPost($id, $request->taggedOrg_id);
 
         // Add photos to the primary post
+        $photoFilenames = [];
         if (!empty($uploadedPhotos)) {
             foreach ($uploadedPhotos as $photoFile) {
                 if ($photoFile->isValid()) {
                     // Generate a sanitized filename
                     $photoFilename = time() . '_' . uniqid() . '_' . preg_replace('/[^a-zA-Z0-9-_\.]/', '', $photoFile->getClientOriginalName());
 
-                    // Move the uploaded file to the desired directory
+                    // Manually move the uploaded file to the public/post-imgs directory
                     $photoFile->move(public_path('post-imgs'), $photoFilename);
+
+                    // Store the filename for future use
+                    $photoFilenames[] = $photoFilename;
 
                     // Create a new PhotoPost record for the primary post
                     PhotoPost::create([
@@ -329,22 +333,14 @@ class GeneralController extends Controller
             // Create a post for the tagged organization
             $taggedPost = $createPost($request->taggedOrg_id, $id);
 
-            // Add photos to the tagged post
-            if (!empty($uploadedPhotos)) {
-                foreach ($uploadedPhotos as $photoFile) {
-                    if ($photoFile->isValid()) {
-                        // Generate a sanitized filename
-                        $photoFilename = time() . '_' . uniqid() . '_' . preg_replace('/[^a-zA-Z0-9-_\.]/', '', $photoFile->getClientOriginalName());
-
-                        // Move the uploaded file to the desired directory
-                        $photoFile->move(public_path('post-imgs'), $photoFilename);
-
-                        // Create a new PhotoPost record for the tagged organization's post
-                        PhotoPost::create([
-                            'post_id' => $taggedPost->id, // Use the tagged post's ID here
-                            'photo_filename' => $photoFilename,
-                        ]);
-                    }
+            // Add photos to the tagged post (same photos as primary post)
+            if (!empty($photoFilenames)) {
+                foreach ($photoFilenames as $photoFilename) {
+                    // Create a new PhotoPost record for the tagged organization's post
+                    PhotoPost::create([
+                        'post_id' => $taggedPost->id, // Use the tagged post's ID here
+                        'photo_filename' => $photoFilename,
+                    ]);
                 }
             }
         }

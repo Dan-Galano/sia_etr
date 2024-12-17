@@ -46,7 +46,7 @@
                         <li class="nav-item">
                             <a class="nav-link btn btn-warning" style="color: black; font-weight: bolder;"
                                 href="{{ route('chat.view', ['org_id' => $orgid]) }}"><i
-                                    class="fas fa-comments"></i>&nbsp; Chat</a>
+                                    class="fas fa-comments"></i>&nbsp; Forum</a>
                         </li>
                     @endif
                 </ul>
@@ -121,7 +121,7 @@
                         <li class="nav-item">
                             <a class="nav-link btn btn-warning" style="color: black; font-weight: bolder;"
                                 href="{{ route('chat.view', ['org_id' => $orgid]) }}"><i
-                                    class="fas fa-comments"></i>&nbsp; Chat</a>
+                                    class="fas fa-comments"></i>&nbsp; Forum</a>
                         </li>
                     @endif
                 </ul>
@@ -444,7 +444,8 @@
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <input type="file" name="photos[]" class="form-control" multiple>
+                                                <input type="file" name="photos[]" class="form-control" multiple
+                                                    accept="image/*">
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
@@ -941,35 +942,34 @@
                     <div class="card rounded-lg shadow p-4 mb-4">
                         <div class="card-body">
                             <ul class="list-unstyled mb-0">
-                                <li class="mb-2"><i class="fas fa-building mr-2"></i>Name:
-                                    <b>{{ $organization->orgname }}</b>
-                                </li>
-                                <li class="mb-2"><i class="fas fa-book mr-2"></i>Program:
-                                    <b>{{ $organization->course }}</b>
-                                </li>
-                                <li class="mb-2"><i class="fas fa-info-circle mr-2"></i>Bio:
-                                    <b>{{ $organization->bio }}</b>
-                                </li>
-                                <li class="mb-2"><i class="fas fa-bullseye mr-2"></i>Mission:
-                                    <b>{{ $organization->mission }}</b>
-                                </li>
-                                <li class="mb-2"><i class="fas fa-bullseye mr-2"></i>Vision:
-                                    <b>{{ $organization->vision }}</b>
-                                </li>
+                                <li class="mb-2"><i class="fas fa-building mr-2"></i><b>Organization's Name:</b>
+                                    {{ $organization->orgname }}</li>
+                                <li class="mb-2"><i class="fas fa-book mr-2"></i><b>Program:</b>
+                                    {{ $organization->course }}</li>
+                                <li class="mb-2"><i class="fas fa-info-circle mr-2"></i><b>Bio:</b><br>
+                                    {{ $organization->bio }}</li><br>
+                                <li class="mb-2"><i class="fas fa-bullseye mr-2"></i><b>Mission:</b><br>
+                                    {{ $organization->mission }}</li><br>
+                                <li class="mb-2"><i class="fas fa-bullseye mr-2"></i><b>Vision:</b><br>
+                                    {{ $organization->vision }}</li><br>
 
-                                <!-- <li><i class="fas fa-phone mr-2"></i> -->
-                                @if ($organization->contact)
-                                    <li class="mt-2">
-                                        <i class="fas fa-phone mr-2"></i>
-                                        <a href="tel:{{ $organization->contact }}">{{ $organization->contact }}</a>
-                                    </li>
+
+                                <li class="mb-2"><b>Contact Number:</b><br>
+                                    @if ($organization->contact)
+                                <li class="mt-2">
+
+                                    <i class="fas fa-phone mr-2"></i> <a
+                                        href="tel:{{ $organization->contact }}">{{ $organization->contact }}</a>
+                                </li><br>
                                 @endif
 
-                                @if ($organization->facebook)
-                                    <li class="mt-2">
-                                        <i class="fab fa-facebook mr-2"></i>
-                                        <a href="{{ $organization->facebook }}" target="_blank">Facebook</a>
-                                    </li>
+
+                                <li class="mb-2"><b>Socials:</b><br>
+                                    @if ($organization->facebook)
+                                <li class="mt-2">
+                                    <i class="fab fa-facebook mr-2"></i>
+                                    <a href="{{ $organization->facebook }}" target="_blank">Facebook</a>
+                                </li>
                                 @endif
 
                                 @if ($organization->instagram)
@@ -999,7 +999,6 @@
                                         <a href="{{ $organization->youtube }}" target="_blank">YouTube</a>
                                     </li>
                                 @endif
-
                             </ul>
 
                         </div>
