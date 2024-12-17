@@ -374,7 +374,7 @@
                             <article class="brick brick--double entry">
                                 <a href="#modal-01" class="entry__link">
                                     <div class="entry__thumb">
-                                        <img src="images/folio/white_turban@2x.png" alt="">
+                                        <img src="images/folio/acc_creation.png" alt="">
                                     </div>
                                     <div class="entry__info">
                                         <div class="entry__cat">FEATURE</div>
@@ -386,7 +386,7 @@
                             <article class="brick brick--double entry">
                                 <a href="#modal-02" class="entry__link">
                                     <div class="entry__thumb">
-                                        <img src="images/folio/caffeine_and_tulips@2x.png" alt="">
+                                        <img src="images/folio/join_engage.png" alt="">
                                     </div>
                                     <div class="entry__info">
                                         <div class="entry__cat">FEATURE</div>
@@ -398,7 +398,7 @@
                             <article class="brick entry">
                                 <a href="#modal-03" class="entry__link">
                                     <div class="entry__thumb">
-                                        <img src="images/folio/grayscale@2x.png" alt="">
+                                        <img src="images/folio/post.png" alt="">
                                     </div>
                                     <div class="entry__info">
                                         <div class="entry__cat">FEATURE</div>
@@ -410,7 +410,7 @@
                             <article class="brick entry">
                                 <a href="#modal-04" class="entry__link">
                                     <div class="entry__thumb">
-                                        <img src="images/folio/lamp@2x.png" alt="">
+                                        <img src="images/folio/chat.png" alt="">
                                     </div>
                                     <div class="entry__info">
                                         <div class="entry__cat">FEATURE</div>
@@ -422,7 +422,7 @@
                             <article class="brick entry">
                                 <a href="#modal-05" class="entry__link">
                                     <div class="entry__thumb">
-                                        <img src="images/folio/tropical@2x.png" alt="">
+                                        <img src="images/folio/profile_custom.png" alt="">
                                     </div>
                                     <div class="entry__info">
                                         <div class="entry__cat">FEATURE</div>
@@ -434,7 +434,7 @@
                             <article class="brick entry">
                                 <a href="#modal-06" class="entry__link">
                                     <div class="entry__thumb">
-                                        <img src="images/folio/woodcraft@2x.png" alt="">
+                                        <img src="images/folio/report.png" alt="">
                                     </div>
                                     <div class="entry__info">
                                         <div class="entry__cat">FEATURE</div>
@@ -452,7 +452,7 @@
                 -------------------------------------------- -->
                 <div id="modal-01" hidden>
                     <div class="modal-popup">
-                        <img src="images/folio/gallery/g-turban.jpg" alt="">
+                        <img src="images/folio/gallery/acc_creation.png" alt="">
 
                         <div class="modal-popup__desc">
                             <h5>Account Creation</h5>
@@ -465,7 +465,7 @@
 
                 <div id="modal-02" hidden>
                     <div class="modal-popup">
-                        <img src="images/folio/gallery/g-tulips.jpg" alt="">
+                        <img src="images/folio/gallery/join_engage.png" alt="">
 
                         <div class="modal-popup__desc">
                             <h5>Join & Engage</h5>
@@ -478,7 +478,7 @@
 
                 <div id="modal-03" hidden>
                     <div class="modal-popup">
-                        <img src="images/folio/gallery/g-grayscale.png" alt="">
+                        <img src="images/folio/gallery/comment.png" alt="">
 
                         <div class="modal-popup__desc">
                             <h5>Post Viewing & Interaction</h5>
@@ -491,7 +491,7 @@
 
                 <div id="modal-04" hidden>
                     <div class="modal-popup">
-                        <img src="images/folio/gallery/g-lamp.png" alt="">
+                        <img src="images/folio/gallery/chat.png" alt="">
 
                         <div class="modal-popup__desc">
                             <h5>Chat Functionality</h5>
@@ -505,7 +505,7 @@
                 <div id="modal-05" hidden>
                     <div class="modal-popup">
 
-                        <img src="images/folio/gallery/g-tropical.png" alt="">
+                        <img src="images/folio/gallery/profile_custom.png" alt="">
 
                         <div class="modal-popup__desc">
                             <h5>Profile Customization</h5>
@@ -518,7 +518,7 @@
 
                 <div id="modal-06" hidden>
                     <div class="modal-popup">
-                        <img src="images/folio/gallery/g-woodcraft.png" alt="">
+                        <img src="images/folio/gallery/report.png" alt="">
 
                         <div class="modal-popup__desc">
                             <h5>Reporting Functionality</h5>
