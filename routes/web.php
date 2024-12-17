@@ -127,9 +127,20 @@ Route::get('/member-home/all', function () {
     return view('member-home-all', compact('hasMembership', 'organizations', 'organizationsM', 'organizationsNotMembers'));
 })->middleware(['auth', 'redirect.home'])->name('member-home-all');
 
+// Admin Dashboard
+Route::get('/admin', [GeneralController::class, 'adminHome'])
+    ->middleware(['auth', 'redirect.home'])
+    ->name('admin-home');
+
+// Admin Organization Routes
+Route::get('/admin/validated', [GeneralController::class, 'validated'])->name('organizations.validated');
+Route::get('/admin/not-validated', [GeneralController::class, 'notValidated'])->name('organizations.not-validated');
+Route::get('/admin/not-validated/{orgId}', [GeneralController::class, 'validationScreen'])->name('organizations.validation');
 
 
- 
+Route::post('/update-status/{id}', [GeneralController::class, 'updateStatus']);
+Route::delete('/delete-organization/{id}', [GeneralController::class, 'deleteOrganization']);
+
 Route::post('/organizations', [GeneralController::class, 'storeOrganization'])->name('organizations.store');
 
 
@@ -213,3 +224,7 @@ Route::post('/reports', [ReportController::class, 'store'])->name('reports.store
 Route::get('/export-reports-pdf/{orgId}', [ReportController::class, 'exportReportsPDF'])->name('export.reports.pdf');
 Route::get('/export-reports-csv/{orgId}', [ReportController::class, 'exportReportsCSV'])->name('export.reports.csv');
 
+//New code for attendance
+Route::get('organization/{org_id}/attendance/{event_id}', [GeneralController::class, 'attendance'])->name('event.attendance');
+Route::post('organization/{org_id}/attendance/{event_id}/store', [GeneralController::class, 'storeAttendance'])->name('attendance.store');
+Route::get('organization/{org_id}/events/{event_id}/delete', [GeneralController::class, 'deleteEvent'])->name('delete.event');

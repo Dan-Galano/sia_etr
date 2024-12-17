@@ -783,6 +783,8 @@
 
                                     @if ($user->type == 'organizer')
                                         <div>
+                                            <a href="{{ route('event.attendance', ['org_id' => $orgid, 'event_id' => $post->id]) }}"
+                                                class="btn btn-primary">Attendance</a>
                                             <a href="#" class="btn btn-warning edit-post" data-toggle="modal"
                                                 data-target="#editEventModal" data-post-id="{{ $post->id }}">
                                                 <i class="fas fa-edit"></i>

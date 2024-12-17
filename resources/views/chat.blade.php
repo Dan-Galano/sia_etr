@@ -78,7 +78,7 @@
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                        
                                 <a href="javascript:history.back()" class="btn btn-warning"><i
-                                        class="fas fa-arrow-left"></i>&nbsp; Back</a> <h6>{{ $organization->orgname }}</h>
+                                        class="fas fa-arrow-left"></i>&nbsp; Back</a> <h6>{{ $organization->orgname }}</h6>
                           
                     </div>
                     <div class="card-body">

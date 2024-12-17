@@ -14,6 +14,8 @@ use App\Models\PhotoPost;
 use App\Models\Chat;
 use App\Models\Report;
 use App\Models\EnrolledStudent;
+use App\Models\Attendance;
+use App\Models\OrgRequiredDoc;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
 
@@ -480,6 +482,9 @@ class GeneralController extends Controller
         return view('chat', ['chats' => $chats, 'organization' => $organization]);
     }
 
+
+
+
     public function sendMessage(Request $request, $orgId)
     {
         $request->validate([
@@ -494,6 +499,117 @@ class GeneralController extends Controller
 
         return redirect()->route('chat.view', ['org_id' => $orgId]);
     }
+
+//New code for attendance
+public function attendance($orgId, $eventId)
+{  
+    $post = Post::where('id', $eventId)->where('organization_id', $orgId)->first();
+
+    if (!$post) {
+        return abort(404, 'Event not found');
+    }
+
+
+    return view('attendance', ['post' => $post, 'orgId' => $orgId]);
+}
+
+public function storeAttendance(Request $request, $orgId, $eventId)
+{
+    $request->validate([
+        'studentId' => 'required',
+    ]);
+
+    $attendance = Attendance::where('post_id', $eventId)->first();
+
+    $student = EnrolledStudent::where('studentId', $request->studentId)->first();
+    if (!$student) {
+        if(!$attendance){
+            return redirect()->back()->with('error', 'Student ID not found.');
+        }
+        $totalAttendanceToDisplay = $attendance->totalAttendance;
+        session()->flash('totalAttendance', $totalAttendanceToDisplay);
+        return redirect()->back()->with('error', 'Student ID not found.');
+    }
+
+    if (!$attendance) {
+        $attendance = new Attendance();
+        $attendance->post_id = $eventId;
+        $attendance->totalAttendance = 1;
+        $attendance->save();
+    } else {
+        $attendance->totalAttendance += 1;
+        $attendance->save();
+    }
+    $totalAttendanceToDisplay = $attendance->totalAttendance;
+
+    session()->flash('totalAttendance', $totalAttendanceToDisplay);
+
+    return redirect()->back()->with('success', 'Attendance recorded successfully!');
+}
+
+public function deleteEvent($orgId, $eventId)
+{
+    $event = Post::findOrFail($eventId);
+    $event->delete();
+
+    return redirect()->route('organization.show', ['id' => $orgId]);
+}
+
+public function adminHome()
+{
+    $organizations = SchoolOrganization::where('status', 'approved')->get();
+    return view('admin', compact('organizations'))->with('tab', 'validated');
+}
+
+public function validated()
+    {
+        $organizations = SchoolOrganization::where('status', 'approved')->get();
+        return view('admin', compact('organizations'))->with('tab', 'validated');
+    }
+
+public function notValidated()
+{
+    $organizations = SchoolOrganization::where('status', 'pending')->get();
+    return view('admin', compact('organizations'))->with('tab', 'not-validated');
+}
+
+public function validationScreen($id)
+{
+    $organization = SchoolOrganization::where('id', $id)->get();
+    $orgDoc = OrgRequiredDoc::where('school_org_id', $id)->select('doc_filename')->first();
+    return view('validate-org', compact('organization'))->with('filename', $orgDoc);
+}
+
+public function updateStatus($id)
+    {
+        $org = SchoolOrganization::find($id);
+        // dd($org);
+        if ($org) {
+            // Update the status to 'approved'
+            $org->status = 'approved';
+            $org->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false], 400);
+    }
+
+
+    public function deleteOrganization($id)
+    {
+        $org = SchoolOrganization::find($id);
+
+        if ($org) {
+            $org->delete();
+
+            return response()->json(['success' => true, 'message' => 'Organization deleted successfully!']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Organization not found!'], 404);
+    }
+
+
 
     // CHECKING STUDENT FOR MEMBER ADD
     public function checkStudent($studentId)

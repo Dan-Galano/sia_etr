@@ -8,14 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class EnrolledStudent extends Model
 {
     use HasFactory;
+    protected $table = 'enrolled_students';
 
-    protected $table = 'enrolled_students'; 
+    // Primary key (if it is not 'id')
+    protected $primaryKey = 'studentId';
 
-    // Specify which attributes are mass assignable
-    protected $fillable = [
-        'studentid', 'firstname', 'middlename', 'lastname', 'contact'
-    ];
+    // Indicates if the primary key is non-incrementing
+    public $incrementing = false;
 
-    // Optional: If you want to prevent Laravel from automatically managing the timestamps
-    public $timestamps = false;
+    // The data type of the primary key
+    protected $keyType = 'string';
+
+    // Mass assignable fields
+    protected $fillable = ['studentId', 'name'];
 }
