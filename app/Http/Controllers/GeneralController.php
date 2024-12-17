@@ -130,6 +130,7 @@ class GeneralController extends Controller
         $organization = $orgid; // Same variable for consistency
         $orgname = $orgid->orgname;
         $coverphoto = $orgid->coverphoto;
+        $orgStatus = $orgid->status;
 
         // Fetch all organizations for the dropdown or another purpose
         $organizations = SchoolOrganization::all(); // Make sure you're getting the data
@@ -185,7 +186,7 @@ class GeneralController extends Controller
             ->get();
 
         // Pass the variables to the view, including $organizations
-        return view('organization-dashboard', compact('orgid', 'orgname', 'coverphoto', 'organization', 'photos', 'members', 'isMember', 'reports', 'organizations'));
+        return view('organization-dashboard', compact('orgid', 'orgname', 'orgStatus', 'coverphoto', 'organization', 'photos', 'members', 'isMember', 'reports', 'organizations'));
     }
 
     public function toggleMember($id, $member_id)
@@ -576,9 +577,10 @@ public function notValidated()
 public function validationScreen($id)
 {
     $organization = SchoolOrganization::where('id', $id)->get();
-    $orgDoc = OrgRequiredDoc::where('school_org_id', $id)->select('doc_filename')->first();
-    return view('validate-org', compact('organization'))->with('filename', $orgDoc);
+    $orgDocs = OrgRequiredDoc::where('school_org_id', $id)->get(); // Fetch documents properly
+    return view('validate-org', compact('organization', 'orgDocs')); // Pass orgDocs to the view
 }
+
 
 public function updateStatus($id)
     {

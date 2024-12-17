@@ -65,16 +65,17 @@
 
     <div class="container mt-5">
         <h1>Organization List</h1>
+        <br><br>
 
         <!-- Tabs -->
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link {{ $tab === 'validated' ? 'active' : '' }}"
-                    href="{{ route('organizations.validated') }}">Validated</a>
+                <a class="nav-link {{ $tab === 'not-validated' ? 'active' : '' }}"
+                    href="{{ route('organizations.not-validated') }}">Pending</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ $tab === 'not-validated' ? 'active' : '' }}"
-                    href="{{ route('organizations.not-validated') }}">Not Validated</a>
+                <a class="nav-link {{ $tab === 'validated' ? 'active' : '' }}"
+                    href="{{ route('organizations.validated') }}">Validated</a>
             </li>
         </ul>
 

@@ -59,7 +59,11 @@ class SigninController extends Controller
         Session::start();
         Session::put('user', $user);
 
-        if ($user->type === 'organizer') {
+        if($user->type === 'admin'){
+            return redirect()->route('admin-home');
+        }
+
+       else  if ($user->type === 'organizer') {
             // Fetch the first organization where the user is an admin
             $organization = SchoolOrganization::where('admin_id', $user->id)->first();
 

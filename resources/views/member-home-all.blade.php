@@ -79,19 +79,21 @@
     <div class="container mt-5">
         <div class="row">
             @foreach ($organizations as $organizationN)
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="{{ route('organization.show', $organizationN->id) }}" class="card-link">
-                        <div class="card rounded shadow-sm">
-                            <div class="card-img-overlay"></div>
-                            <div class="card-content">
-                                <h5 class="card-title">{{ $organizationN->orgname }}</h5>
-                                <p class="card-text">{{ $organizationN->course }}</p>
+                @if ($organizationN->status == 'approved')
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <a href="{{ route('organization.show', $organizationN->id) }}" class="card-link">
+                            <div class="card rounded shadow-sm">
+                                <div class="card-img-overlay"></div>
+                                <div class="card-content">
+                                    <h5 class="card-title">{{ $organizationN->orgname }}</h5>
+                                    <p class="card-text">{{ $organizationN->course }}</p>
+                                </div>
+                                <img src="{{ asset('cover-photos/' . $organizationN->coverphoto) }}"
+                                    class="card-img-top" alt="Organization Cover Photo">
                             </div>
-                            <img src="{{ asset('cover-photos/' . $organizationN->coverphoto) }}" class="card-img-top"
-                                alt="Organization Cover Photo">
-                        </div>
-                    </a>
-                </div>
+                        </a>
+                    </div>
+                @endif
             @endforeach
 
         </div>

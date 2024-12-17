@@ -68,17 +68,13 @@
     <div class="container mt-5">
         <div class="row">
             @foreach ($organization as $org)
-                @php
-                    $fileExtension = pathinfo($filename->doc_filename, PATHINFO_EXTENSION);
-                @endphp
                 <div class="col-md-12 mb-4">
                     <!-- Organization Card -->
                     <div class="card shadow-sm border-light rounded">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h1 class="card-title text-primary">Organization Validation {{ $org->id }}</h1>
-                                <button class="btn btn-success validate-btn"
-                                    data-org-id="{{ $org->id }}">Validate</button>
+                                <button class="btn btn-success validate-btn" data-org-id="{{ $org->id }}">Validate</button>
                             </div>
                             <hr>
                             <div class="mb-3">
@@ -93,28 +89,38 @@
                                 <h5 class="card-subtitle text-muted">Bio</h5>
                                 <p class="card-text">{{ $org->bio }}</p>
                             </div>
-
-                            <!-- Document Display -->
+    
+                            <!-- Documents Display -->
                             <div class="mt-4">
-                                @if ($fileExtension === 'pdf')
-                                    <!-- Display PDF -->
-                                    <div class="embed-responsive embed-responsive-16by9">
-                                        <embed
-                                            src="{{ asset('storage/organization_documents/' . basename($filename->doc_filename)) }}"
-                                            type="application/pdf" class="embed-responsive-item">
+                                @foreach ($orgDocs as $index => $doc)
+                                    @php
+                                        $fileExtension = pathinfo($doc->doc_filename, PATHINFO_EXTENSION);
+                                    @endphp
+    
+                                    <div class="mb-3">
+                                        <h5 class="card-subtitle text-muted">Document {{ $index + 1 }}</h5>
+                                        @if ($fileExtension === 'pdf')
+                                            <!-- Display PDF -->
+                                            <div class="embed-responsive embed-responsive-16by9">
+                                                <embed src="{{ asset('org-docs/' . $doc->doc_filename) }}" type="application/pdf" class="embed-responsive-item">
+                                            </div>
+                                        @elseif(in_array($fileExtension, ['jpg', 'jpeg', 'png']))
+                                            <!-- Display Image -->
+                                            <img src="{{ asset('org-docs/' . $doc->doc_filename) }}" alt="Uploaded Image" class="img-fluid rounded shadow-sm">
+                                        @else
+                                            <p>Unsupported file type: {{ $fileExtension }}</p>
+                                        @endif
                                     </div>
-                                @elseif(in_array($fileExtension, ['jpg', 'jpeg', 'png']))
-                                    <!-- Display Image -->
-                                    <img src="{{ asset('storage/organization_documents/' . basename($filename->doc_filename)) }}"
-                                        alt="Uploaded Image" class="img-fluid rounded shadow-sm">
-                                @endif
+                                @endforeach
                             </div>
+    
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
     </div>
+    
 
 
 
