@@ -82,49 +82,7 @@
 
         <!-- Tab Content -->
         <div class="tab-content" id="organization-tabs-content">
-            @if ($tab === 'validated')
-                <div class="tab-pane fade show active" id="validated" role="tabpanel" aria-labelledby="validated-tab">
-                    <table class="table table-striped">
-                        <thead class="thead-light">
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Logo</th>
-                                <th scope="col">Organization Name</th>
-                                <th scope="col">Course</th>
-                                <th scope="col">Bio</th>
-                                <th scope="col">Contact</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($organizations as $organization)
-                                <tr>
-                                    <th scope="row">{{ $loop->iteration }}</th>
-                                    <td>
-                                        <img src="{{ asset('cover-photos/' . $organization->coverphoto) }}"
-                                            alt="Cover Photo"
-                                            style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-                                    </td>
-                                    <td>{{ $organization->orgname }}</td>
-                                    <td>{{ $organization->course }}</td>
-                                    <td>{{ $organization->bio }}</td>
-                                    <td>{{ $organization->contact }}</td>
-                                    <td class="d-flex gap-2">
-                                        <button class="btn btn-danger delete-btn ms-2"
-                                            data-id="{{ $organization->id }}">
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="text-center">No validated organizations found.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            @else
+            @if ($tab === 'not-validated')
                 <div class="tab-pane fade show active" id="not-validated" role="tabpanel"
                     aria-labelledby="not-validated-tab">
                     <table class="table">
@@ -133,7 +91,7 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Logo</th>
                                 <th scope="col">Organization Name</th>
-                                <th scope="col">Course</th>
+                                <th scope="col">Program</th>
                                 <th scope="col">Bio</th>
                                 <th scope="col">Contact</th>
                                 <th scope="col">Action</th>
@@ -164,6 +122,49 @@
                             @empty
                                 <tr>
                                     <td colspan="7" class="text-center">No not validated organizations found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="tab-pane fade show active" id="validated" role="tabpanel"
+                    aria-labelledby="validated-tab">
+                    <table class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Logo</th>
+                                <th scope="col">Organization Name</th>
+                                <th scope="col">Program</th>
+                                <th scope="col">Bio</th>
+                                <th scope="col">Contact</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($organizations as $organization)
+                                <tr>
+                                    <th scope="row">{{ $loop->iteration }}</th>
+                                    <td>
+                                        <img src="{{ asset('cover-photos/' . $organization->coverphoto) }}"
+                                            alt="Cover Photo"
+                                            style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                                    </td>
+                                    <td>{{ $organization->orgname }}</td>
+                                    <td>{{ $organization->course }}</td>
+                                    <td>{{ $organization->bio }}</td>
+                                    <td>{{ $organization->contact }}</td>
+                                    <td class="d-flex gap-2">
+                                        <button class="btn btn-danger delete-btn ms-2"
+                                            data-id="{{ $organization->id }}">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center">No validated organizations found.</td>
                                 </tr>
                             @endforelse
                         </tbody>

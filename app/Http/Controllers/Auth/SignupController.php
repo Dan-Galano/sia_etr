@@ -159,7 +159,7 @@ class SignupController extends Controller
 
             \Log::info('Organization and user created successfully.');
 
-            return response()->json(['success' => true, 'message' => 'Organization successfully registered!']);
+            return response()->json(['Account Created' => true, 'message' => 'Organization account successfully created!']);
         } catch (\Exception $e) {
             \Log::error('Error in signupOrganization method: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

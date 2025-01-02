@@ -738,7 +738,7 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <input type="file" name="photos[]" class="form-control"
-                                                        multiple>
+                                                        multiple accept="image/*">
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
@@ -799,7 +799,7 @@
                                             <div>
                                                 <a href="{{ route('event.attendance', ['org_id' => $orgid, 'event_id' => $post->id]) }}"
                                                     class="btn btn-primary">Attendance</a>
-                                                <a href="#" class="btn btn-warning edit-post"
+                                                {{-- <a href="#" class="btn btn-warning edit-post"
                                                     data-toggle="modal" data-target="#editEventModal"
                                                     data-post-id="{{ $post->id }}">
                                                     <i class="fas fa-edit"></i>
@@ -807,7 +807,7 @@
                                                 <a href="{{ route('post.delete', $post->id) }}"
                                                     class="btn btn-danger delete-post"
                                                     onclick="return confirm('Are you sure you want to delete this post?');"><i
-                                                        class="fas fa-trash"></i></a>
+                                                        class="fas fa-trash"></i></a> --}}
                                             </div>
                                         @endif
                                     </div>
@@ -1079,11 +1079,13 @@
                             {{-- CHECKS IF ORG AND USER --}}
                             @if ($user->type == 'organizer')
                                 <td>
-                                    <form action="{{ route('officer.delete', ['id' => $officer->id]) }}"
+                                    <form id="deleteOfficerForm-{{ $officer->id }}"
+                                        action="{{ route('officer.delete', ['id' => $officer->id]) }}"
                                         method="POST">
                                         @csrf
                                         @method('PUT')
-                                        <button type="submit" class="btn btn-danger">
+                                        <button type="button" class="btn btn-danger"
+                                            onclick="confirmDeleteOfficer({{ $officer->id }})">
                                             <i class="fa fa-remove"></i> Remove officer
                                         </button>
                                     </form>
@@ -1130,7 +1132,7 @@
                                     <div class="mb-3">
                                         <label for="officer_last_name" class="form-label">Position:</label>
                                         <input type="text" class="form-control" id="position" name="position"
-                                            placeholder="Enter last name" required>
+                                            placeholder="Enter position" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="officer_contact" class="form-label">Contact:</label>
@@ -1168,7 +1170,7 @@
                                 <th>Student ID</th>
                                 <th>Full Name</th>
                                 <th>Email</th>
-                                <th>Payment</th>
+                                {{-- <th>Payment</th> --}}
                                 <th>Status</th>
                                 <th>Action</th>
                                 <!-- <th>Action</th> -->
@@ -1185,7 +1187,7 @@
                                     <td>{{ $member->firstname }} {{ $member->middlename }}
                                         {{ $member->lastname }}</td>
                                     <td>{{ $member->email }}</td>
-                                    <td>{{ $member->payment_status }}</td>
+                                    {{-- <td>{{ $member->payment_status }}</td> --}}
                                     <td>
                                         <form
                                             action="{{ route('organization.toggleMember', ['id' => $orgid->id, 'member_id' => $member->id]) }}"
@@ -1203,8 +1205,7 @@
                                     <td style="text-align: center; vertical-align: top;">
                                         <form
                                             action="{{ route('organization.deleteMember', ['org_id' => $orgid->id, 'member_id' => $member->id]) }}"
-                                            method="POST"
-                                            onsubmit="return confirm('Are you sure you want to delete this member?');">
+                                            method="POST" onsubmit="return confirmDelete(event);">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger">
@@ -1247,13 +1248,13 @@
                                         <button class="btn btn-info" id="checkStudentBtn">Check</button>
                                     </div>
 
-                                    <div class="form-group">
+                                    {{-- <div class="form-group">
                                         <label for="payment_status">Payment Status</label>
                                         <select class="form-control" id="payment_status">
                                             <option value="Half-year">Half-year</option>
                                             <option value="Full-year">Full-year</option>
                                         </select>
-                                    </div>
+                                    </div> --}}
                                     <div class="form-group">
                                         <label for="firstname">First Name</label>
                                         <input type="text" class="form-control" id="firstname" readonly required>
@@ -1505,7 +1506,8 @@
                             <textarea name="content" class="form-control">{{ $post->content }}</textarea>
                             <div class="form-group">
                                 <label for="photos">Update Photos</label>
-                                <input type="file" name="photos[]" class="form-control-file" multiple>
+                                <input type="file" name="photos[]" class="form-control-file" multiple
+                                    accept="image/*">
                             </div>
                             <div class="current-photos">
                                 @foreach ($post->photos as $photo)
@@ -1640,7 +1642,7 @@
                             <div class="form-group">
                                 <label for="photos">Upload Photos</label>
                                 <input type="file" class="form-control-file" id="photos" name="photos[]"
-                                    multiple>
+                                    multiple accept="image/*">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -1671,7 +1673,48 @@
 
 
 
+    <script>
+        function confirmDeleteOfficer(officerId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This action cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, remove it!',
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the form programmatically
+                    document.getElementById(`deleteOfficerForm-${officerId}`).submit();
+                }
+            });
+        }
+    </script>
 
+    <script>
+        function confirmDelete(event) {
+            event.preventDefault(); // Prevent form submission
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to undo this action!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    event.target.closest('form').submit(); // Submit the form if confirmed
+                }
+            });
+
+            return false; // Prevent default form submission until confirmation
+        }
+    </script>
 
     <script>
         var postId;
@@ -1735,12 +1778,12 @@
             // Get values from the modal form
             var studentId = $('#studentid').val();
             var organizationId = $('#organizationId').val();
-            var paymentStatus = $('#payment_status').val();
+            // var paymentStatus = $('#payment_status').val();
 
             // Combine first name, middle name, and last name into full nam
 
             // Validate required fields
-            if (!studentId || !paymentStatus) {
+            if (!studentId) {
                 alert('All fields are required.');
                 return;
             }
@@ -1753,17 +1796,27 @@
                     _token: '{{ csrf_token() }}', // Include CSRF token
                     studentid: studentId,
                     organization_id: organizationId,
-                    payment_status: paymentStatus
+                    // payment_status: paymentStatus
                 },
                 success: function(response) {
                     if (response.success) {
-                        alert('Member added successfully!');
-                        $('#addMemberModal').modal('hide'); // Close the modal
-                        location.reload(); // Reload the page to update the table
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Member added successfully!',
+                        }).then(() => {
+                            $('#addMemberModal').modal('hide'); // Close the modal
+                            window.location.reload(); // Reload the page to update the table
+                        });
                     } else {
-                        alert(response.message || 'Failed to add member.');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message || 'Failed to add member.',
+                        });
                     }
                 },
+
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
                     alert('An error occurred. Please try again.');

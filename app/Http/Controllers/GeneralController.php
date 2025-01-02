@@ -641,7 +641,7 @@ public function updateStatus($id)
         $validated = $request->validate([
             'studentid' => 'required|string|max:255',
             'organization_id' => 'required|integer',
-            'payment_status' => 'required|string|max:20',
+            // 'payment_status' => 'nullable|string|max:20',
         ]);
 
         // Find the user by studentid
@@ -654,7 +654,7 @@ public function updateStatus($id)
             DB::table('organization_members')->insert([
                 'organization_id' => $validated['organization_id'],
                 'member_id' => $user->id,
-                'payment_status' => $validated['payment_status'],
+                // 'payment_status' => $validated['payment_status'],
                 'status' => 'approved', // Default status
                 'is_admin' => 0, // Default to non-admin
                 'created_at' => now(),
