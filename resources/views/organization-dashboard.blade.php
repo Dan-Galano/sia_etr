@@ -1056,6 +1056,7 @@
             <table id="officersTable" class="table table-striped table-bordered" style="width:100%">
                 <thead>
                     <tr>
+                        <th>Photo</th>
                         <th>Name</th>
                         <th>Position</th>
                         <th>Contact</th>
@@ -1072,6 +1073,11 @@
                     @endphp
                     @foreach ($officers as $officer)
                         <tr>
+                            <td>
+                                {{-- SYNTAX: {{ asset('profile-imgs/' . $officer->photo) }} --}}
+                                <img src="{{ asset('profile-imgs/' . $officer->photo) }}" class="rounded-circle"
+                                    width="50" height="50" alt="User Photo">
+                            </td>
                             <td>{{ $officer->officer_first_name }} {{ $officer->officer_last_name }}</td>
                             <td>{{ $officer->position }}</td>
                             <td>{{ $officer->officer_contact }}</td>
@@ -1111,7 +1117,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('officer.add') }}" method="POST">
+                <form action="{{ route('officer.add') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="container-fluid bg-light p-3">
@@ -1119,6 +1125,21 @@
                                 <div class="col">
                                     <input type="hidden" name="from_organization_id"
                                         value="{{ $organization->id }}" required>
+                                    <div class="form-group">
+                                        <label for="photo">Profile Photo</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="photo" name="photo" accept="image/*"
+                                                onchange="previewPhoto(event)">
+                                            <label class="custom-file-label" for="photo">Choose Photo</label>
+                                        </div>
+                                        <div class="text-center">
+                                            <img id="photo-preview" class="img ml-2 rounded-circle mx-auto" src="#"
+                                                style="display: none; width: 200px; height: 200px; margin: 20px;">
+                                        </div>
+                                        @error('photo')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                     <div class="mb-3">
                                         <label for="officer_first_name" class="form-label">First Name:</label>
                                         <input type="text" class="form-control" id="officer_first_name"
@@ -1674,6 +1695,17 @@
 
 
     <script>
+        function previewPhoto(event) {
+            var preview = document.getElementById('photo-preview');
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
         function confirmDeleteOfficer(officerId) {
             Swal.fire({
                 title: 'Are you sure?',
