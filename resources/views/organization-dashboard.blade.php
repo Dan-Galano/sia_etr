@@ -1049,16 +1049,31 @@
 
             {{-- CHECKS IF ORG AND USER --}}
             @if ($user->type == 'organizer')
-                <a href="#" class="" data-toggle="modal" data-target="#addOfficerModal">
+            <div class="row">
+                <a href="#" class="mr-1" data-toggle="modal" data-target="#addOfficerModal">
                     <button type="button" class="btn btn-primary mb-4">Add officer</button>
                 </a>
+                <form id="markAllOfficerAsPrevious" action="{{ route('officers.markAllAsPrevious') }}" method="get">
+                    @csrf
+                    <button 
+                    type="submit" 
+                    class="btn btn-secondary"
+                    onclick="confirmMarkAllOfficerAsPrevious(event)"
+                    >Mark All Officers as Previous</button>
+                </form>
+            </div>                
             @endif
+            
+            <div class="mb-3">
+                <h3>Current Officers</h3>
+            </div>
             <table id="officersTable" class="table table-striped table-bordered" style="width:100%">
                 <thead>
                     <tr>
                         <th>Photo</th>
                         <th>Name</th>
                         <th>Position</th>
+                        <th>Term</th>
                         <th>Contact</th>
                         @if ($user->type == 'organizer')
                             <th>Action</th>
@@ -1069,6 +1084,7 @@
                     @php
                         $officers = DB::table('officers')
                             ->where('from_organization_id', $organization->id)
+                            ->where('is_current', 1)
                             ->get();
                     @endphp
                     @foreach ($officers as $officer)
@@ -1080,27 +1096,105 @@
                             </td>
                             <td>{{ $officer->officer_first_name }} {{ $officer->officer_last_name }}</td>
                             <td>{{ $officer->position }}</td>
+                            <td>{{ $officer->term_start }} - {{ $officer->term_end }}</td>
                             <td>{{ $officer->officer_contact }}</td>
 
                             {{-- CHECKS IF ORG AND USER --}}
                             @if ($user->type == 'organizer')
                                 <td>
-                                    <form id="deleteOfficerForm-{{ $officer->id }}"
-                                        action="{{ route('officer.delete', ['id' => $officer->id]) }}"
-                                        method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="button" class="btn btn-danger"
-                                            onclick="confirmDeleteOfficer({{ $officer->id }})">
-                                            <i class="fa fa-remove"></i> Remove officer
-                                        </button>
-                                    </form>
+                                    <div class="row">
+                                        <form id="deleteOfficerForm-{{ $officer->id }}"
+                                            action="{{ route('officer.delete', ['id' => $officer->id]) }}"
+                                            method="POST" class="mr-1">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="button" class="btn btn-danger"
+                                                onclick="confirmDeleteOfficer({{ $officer->id }})">
+                                                <i class="fa-solid fa-user-xmark"></i>
+                                            </button>
+                                        </form>
+                                        <form id="endOfficerTermForm-{{ $officer->id }}"
+                                            action="{{ route('officer.endOfficerTerm', ['id' => $officer->id]) }}"
+                                            method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="button" class="btn btn-secondary"
+                                                onclick="confirmEndOfficerTerm({{ $officer->id }})">
+                                                <i class="fa-solid fa-user-minus"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             @endif
                         </tr>
                     @endforeach
                 </tbody>
+
             </table>
+
+            @php
+                $officers = DB::table('officers')
+                    ->where('from_organization_id', $organization->id)
+                    ->where('is_current', 0)
+                    ->orderBy('term_start', 'desc')
+                    ->get();
+            @endphp
+            @if (!$officers->isEmpty())
+                <div class="previous-officers">
+                    <div class="my-3">
+                        <h3>Previous Officers</h3>
+                    </div>
+                    <table id="previousOfficersTable" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Photo</th>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Term</th>
+                                <th>Contact</th>
+                                @if ($user->type == 'organizer')
+                                    <th>Action</th>
+                                @endif
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($officers as $officer)
+                                <tr>
+                                    <td>
+                                        {{-- SYNTAX: {{ asset('profile-imgs/' . $officer->photo) }} --}}
+                                        <img src="{{ asset('profile-imgs/' . $officer->photo) }}"
+                                            class="rounded-circle" width="50" height="50" alt="User Photo">
+                                    </td>
+                                    <td>{{ $officer->officer_first_name }} {{ $officer->officer_last_name }}</td>
+                                    <td>{{ $officer->position }}</td>
+                                    <td>{{ $officer->term_start }} - {{ $officer->term_end }}</td>
+                                    <td>{{ $officer->officer_contact }}</td>
+
+                                    {{-- CHECKS IF ORG AND USER --}}
+                                    @if ($user->type == 'organizer')
+                                        <td>
+                                            <div class="row">
+                                                <form id="deleteOfficerForm-{{ $officer->id }}"
+                                                    action="{{ route('officer.delete', ['id' => $officer->id]) }}"
+                                                    method="POST" class="mr-1">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="button" class="btn btn-danger"
+                                                        onclick="confirmDeleteOfficer({{ $officer->id }})">
+                                                        <i class="fa-solid fa-user-xmark"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+
+
+                                        </td>
+                                    @endif
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         </div>
         <br><br><br>
     </div>
@@ -1128,12 +1222,13 @@
                                     <div class="form-group">
                                         <label for="photo">Profile Photo</label>
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="photo" name="photo" accept="image/*"
-                                                onchange="previewPhoto(event)">
+                                            <input type="file" class="custom-file-input" id="photo"
+                                                name="photo" accept="image/*" onchange="previewPhoto(event)">
                                             <label class="custom-file-label" for="photo">Choose Photo</label>
                                         </div>
                                         <div class="text-center">
-                                            <img id="photo-preview" class="img ml-2 rounded-circle mx-auto" src="#"
+                                            <img id="photo-preview" class="img ml-2 rounded-circle mx-auto"
+                                                src="#"
                                                 style="display: none; width: 200px; height: 200px; margin: 20px;">
                                         </div>
                                         @error('photo')
@@ -1159,6 +1254,19 @@
                                         <label for="officer_contact" class="form-label">Contact:</label>
                                         <input type="text" class="form-control" id="officer_contact"
                                             name="officer_contact" placeholder="Enter contact details" required>
+                                    </div>
+                                    <label for="term" class="form-label">Term: </label> <br>
+                                    <div class="mb-3">
+                                        <input type="number" class="form-control" name="term_start"
+                                            placeholder="Enter year elected" min="1979"
+                                            max="{{ date('Y') }}">
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" name="is_current" type="checkbox"
+                                            id="flexCheckChecked" value="1" checked>
+                                        <label class="form-check-label" for="flexCheckChecked">
+                                            Is current officer?
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -1549,8 +1657,8 @@
         </div>
 
         <!-- Edit Event Modal -->
-        <div class="modal fade" id="editEventModal" tabindex="-1" role="dialog" aria-labelledby="editEventModalLabel"
-            aria-hidden="true">
+        <div class="modal fade" id="editEventModal" tabindex="-1" role="dialog"
+            aria-labelledby="editEventModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -1706,15 +1814,52 @@
             reader.readAsDataURL(file);
         }
 
-        function confirmDeleteOfficer(officerId) {
+        function confirmEndOfficerTerm(officerId) {
+            Swal.fire({
+                title: 'End Officer’s Term?',
+                text: 'Are you sure you want to mark this officer as a previous officer? This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, end the term',
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the form programmatically
+                    document.getElementById(`endOfficerTermForm-${officerId}`).submit();
+                }
+            });
+        }
+
+        function confirmMarkAllOfficerAsPrevious(event) {
+            event.preventDefault();
             Swal.fire({
                 title: 'Are you sure?',
+                text: 'This will mark all current officers as previous officers and cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, mark all as previous',
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the form programmatically
+                    document.getElementById(`markAllOfficerAsPrevious`).submit();
+                }
+            });
+        }
+    
+        function confirmDeleteOfficer(officerId) {
+            Swal.fire({
+                title: 'Remove officer?',
                 text: "This action cannot be undone!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, remove it!',
+                confirmButtonText: 'Remove',
                 cancelButtonText: 'Cancel',
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -2004,6 +2149,7 @@
         $(document).ready(function() {
             $('#membersTable').DataTable();
             $('#officersTable').DataTable();
+            $('#previousOfficersTable').DataTable();
             $('#reportsTable').DataTable();
         });
     </script>
