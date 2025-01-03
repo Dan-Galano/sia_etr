@@ -228,3 +228,10 @@ Route::get('/export-reports-csv/{orgId}', [ReportController::class, 'exportRepor
 Route::get('organization/{org_id}/attendance/{event_id}', [GeneralController::class, 'attendance'])->name('event.attendance');
 Route::post('organization/{org_id}/attendance/{event_id}/store', [GeneralController::class, 'storeAttendance'])->name('attendance.store');
 Route::get('organization/{org_id}/events/{event_id}/delete', [GeneralController::class, 'deleteEvent'])->name('delete.event');
+
+
+//accreditation
+Route::post('/upload-required-docs', [GeneralController::class, 'uploadRequiredDocs'])->name('upload.required.docs');
+
+//accreditation if rejected 
+Route::post('/org/required-doc/store', [GeneralController::class, 'uploadReaccreditationDocument'])->name('org.requiredDoc.store');

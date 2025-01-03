@@ -14,6 +14,8 @@ class OrgRequiredDoc extends Model
     protected $fillable = [
         'school_org_id',
         'doc_filename',
+        'type', 
+        'description', 
     ];
 
     public function schoolOrganization()

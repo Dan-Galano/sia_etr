@@ -702,4 +702,126 @@ public function updateStatus($id)
 
         return redirect()->back()->with('success', 'Member deleted successfully.');
     }
+
+    // REACCREDITATION UPLOAD
+    public function uploadRequiredDocs(Request $request)
+    {
+        try {
+            // Validate inputs
+            $validated = $request->validate([
+                'school_org_id' => 'required|integer',
+                'files' => 'required|array|min:1',
+                'files.*' => 'file|mimes:pdf,doc,docx|max:2048', // Only pdf and doc file types allowed
+                'type' => 'required|in:reaccreditation,other',
+                'description' => 'nullable|string|max:255',
+            ]);
+
+            // Initialize an array to store uploaded filenames
+            $uploadedFiles = [];
+
+            // Check if the request has files
+            if ($request->hasFile('files')) {
+                // Loop through each uploaded file
+                foreach ($request->file('files') as $file) {
+                    // Generate a unique filename for each file
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    // Store the file in the 'uploads' directory
+                    $filePath = $file->storeAs('uploads', $filename, 'public');
+
+                    // Save each file's information in the database
+                    OrgRequiredDoc::create([
+                        'school_org_id' => $validated['school_org_id'],
+                        'doc_filename' => $filename,
+                        'type' => $validated['type'], // Save the submission type (reaccreditation or other)
+                        'description' => $validated['description'], // Save the description if provided
+                    ]);
+
+                    // Add the filename to the response list
+                    $uploadedFiles[] = $filename;
+                }
+
+                // Return a successful response with the uploaded files
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Files uploaded successfully.',
+                    'files' => $uploadedFiles,
+                ]);
+            }
+
+            // If no files are uploaded, return a failure response
+            return response()->json([
+                'success' => false,
+                'message' => 'No files uploaded.',
+            ], 400);
+        } catch (ValidationException $e) {
+            // Return validation errors if validation fails
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            // Return generic error if an exception occurs
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    //upload reaccred if rejected
+    public function uploadReaccreditationDocument(Request $request)
+    {
+        // Validate the file, description, and school_org_id
+        $request->validate([
+            'doc_file' => 'required|file|mimes:pdf,doc,docx|max:10240', // Maximum file size 10MB
+            'description' => 'nullable|string|max:255', // Description max length
+            'school_org_id' => 'required|exists:school_organizations,id', // Ensure school_org_id is valid
+        ]);
+
+        try {
+            // Handle file upload
+            if ($request->hasFile('doc_file') && $request->file('doc_file')->isValid()) {
+                // Get the uploaded file
+                $file = $request->file('doc_file');
+                
+                // Generate a unique file name for the document
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                
+                // Store the file in the "uploads" folder (or any other folder you prefer)
+                $file->storeAs('uploads', $fileName, 'public');
+
+                // Create a new OrgRequiredDoc record with the passed school_org_id
+                OrgRequiredDoc::create([
+                    'school_org_id' => $request->school_org_id, // Use the passed school_org_id
+                    'doc_filename' => $fileName,
+                    'type' => 'reaccreditation', // Set type as 'reaccreditation'
+                    'description' => $request->description, // Save the description
+                ]);
+
+                // Return success response
+                return response()->json([
+                    'message' => 'Document uploaded successfully!',
+                    'status' => 'success',
+                    'success' => true  // Indicate success
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'Failed to upload document. Please try again.',
+                'status' => 'error',
+                'success' => false  // Indicate failure
+            ]);
+        } catch (\Exception $e) {
+            // Handle any errors that may occur
+            \Log::error('Document upload error: ' . $e->getMessage());  // Log error
+            return response()->json([
+                'message' => 'An error occurred while uploading the document. Please try again.',
+                'status' => 'error',
+                'error' => $e->getMessage(),
+                'success' => false
+            ]);
+        }
+    }
+
+ 
 }
