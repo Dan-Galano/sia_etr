@@ -61,6 +61,7 @@ class SchoolOrganization extends Model
     protected $table = 'school_organizations';
 
     protected $fillable = [
+        'status',
         'orgname',
         'course',
         'bio',

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('school_organizations', function (Blueprint $table) {
             $table->id();
+            $table->enum('status', ['pending', 'approved', 'rejected', 'reaccred'])->default('pending');
             $table->string('orgname');
             $table->string('course');
             $table->text('bio');

@@ -1246,6 +1246,7 @@
                                         {{ $member->lastname }}</td>
                                     <td>{{ $member->email }}</td>
                                     {{-- <td>{{ $member->payment_status }}</td> --}}
+                                    
                                     <td>
                                         <form
                                             action="{{ route('organization.toggleMember', ['id' => $orgid->id, 'member_id' => $member->id]) }}"
@@ -1713,7 +1714,7 @@
         </div>
     @endisset
     
-    @elseif($orgStatus == 'rejected')
+    @elseif($orgStatus == 'reaccred')
     <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 40vh; text-align: center; color: #ffc107;">
         <i class="fas fa-exclamation-triangle fs-3" style="color: #ffc107; font-size: 2rem;"></i><br>
         <h6 style="color: #6c757d;">You need to comply with the required documents for reaccreditation.</h6>

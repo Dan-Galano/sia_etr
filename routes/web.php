@@ -187,8 +187,14 @@ Route::post('/posts/{post}/comments', [PostController::class, 'storeComment'])->
 Route::put('/events/{id}', [PostController::class, 'updateEventPost'])->name('events.update');
 Route::put('/eventwithphoto/{id}', [PostController::class, 'updateEventWithPhoto'])->name('eventwithphoto.update');
 
-
+// MEMBER STATUS TOGGLES
 Route::put('/organization/{id}/toggle-member/{member_id}', [GeneralController::class, 'toggleMember'])->name('organization.toggleMember');
+
+// ORG STATUS TOGGLES
+Route::put('/admin/toggle-organization/{organization_id}', [GeneralController::class, 'toggleOrganization'])->name('admin.toggleOrganization');
+
+// DISABLE ALL ORG
+Route::post('/organization/set-all-reaccred', [GeneralController::class, 'setAllReaccred'])->name('organization.setAllReaccred');
 
 
 Route::get('/profile', [GeneralController::class, 'showProfile'])->name('profile.show');

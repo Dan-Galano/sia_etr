@@ -203,6 +203,37 @@ class GeneralController extends Controller
         return redirect("/organization/{$id}");
     }
 
+    // TOGGLE ORG 
+    public function toggleOrganization($organization_id)
+    {
+        $organization = DB::table('school_organizations')->where('id', $organization_id)->first();
+
+        if ($organization) {
+            $newStatus = $organization->status === 'approved' ? 'reaccred' : 'approved';
+            DB::table('school_organizations')
+                ->where('id', $organization_id)
+                ->update(['status' => $newStatus]);
+        }
+
+        return redirect()->back()->with('success', 'Organization status updated successfully.');
+    }
+
+    // DISABLE ALL ORGS
+    public function setAllReaccred()
+    {
+        try {
+            // Update all organizations to 'reaccred' status
+            SchoolOrganization::whereIn('status', ['approved', 'pending', 'rejected'])->update(['status' => 'reaccred']);
+
+            return redirect()->back()->with('success', 'All organizations have been set to reaccred.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while updating the statuses. Please try again.');
+        }
+    }
+
+
+
+
     public function createPost($id)
     {
         return view('posts.create', compact('id'));
@@ -564,7 +595,7 @@ public function adminHome()
 
 public function validated()
     {
-        $organizations = SchoolOrganization::where('status', 'approved')->get();
+        $organizations = SchoolOrganization::whereIn('status', ['approved', 'reaccred'])->get();
         return view('admin', compact('organizations'))->with('tab', 'validated');
     }
 

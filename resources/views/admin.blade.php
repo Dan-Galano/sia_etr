@@ -130,6 +130,12 @@
             @else
                 <div class="tab-pane fade show active" id="validated" role="tabpanel"
                     aria-labelledby="validated-tab">
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button type="button" class="btn btn-danger" id="setAllReaccredButton">Disable all</button>
+                    </div>
+
+
+
                     <table class="table table-striped">
                         <thead class="thead-light">
                             <tr>
@@ -139,7 +145,7 @@
                                 <th scope="col">Program</th>
                                 <th scope="col">Bio</th>
                                 <th scope="col">Contact</th>
-                                <th scope="col">Action</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -156,10 +162,22 @@
                                     <td>{{ $organization->bio }}</td>
                                     <td>{{ $organization->contact }}</td>
                                     <td class="d-flex gap-2">
-                                        <button class="btn btn-danger delete-btn ms-2"
+                                        <!-- <button class="btn btn-danger delete-btn ms-2"
                                             data-id="{{ $organization->id }}">
                                             Delete
-                                        </button>
+                                        </button> -->
+                                        <form
+                                            action="{{ route('admin.toggleOrganization', ['organization_id' => $organization->id]) }}"
+                                            method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit"
+                                                class="btn btn-{{ $organization->status === 'approved' ? 'success' : 'dark' }}">
+                                                <i
+                                                    class="fas fa-toggle-{{ $organization->status === 'approved' ? 'off' : 'on' }}"></i>
+                                                {{ $organization->status === 'approved' ? 'Active' : 'Disabled' }}
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @empty
@@ -228,6 +246,30 @@
                     });
                 });
             });
+
+            // DISABLING ALL ORG
+            document.getElementById('setAllReaccredButton').addEventListener('click', function() {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This will set all organizations to 'reaccred'.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, set all!',
+                    cancelButtonText: 'No, cancel',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Submit the form if confirmed
+                        const form = document.createElement('form');
+                        form.action = "{{ route('organization.setAllReaccred') }}";
+                        form.method = 'POST';
+                        form.innerHTML = '@csrf';
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            });
+
         </script>
 
 
