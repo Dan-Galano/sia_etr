@@ -222,14 +222,14 @@ class GeneralController extends Controller
     public function setAllReaccred()
     {
         try {
-            // Update all organizations to 'reaccred' status
-            SchoolOrganization::whereIn('status', ['approved', 'pending', 'rejected'])->update(['status' => 'reaccred']);
+            SchoolOrganization::where('status', 'approved')->update(['status' => 'reaccred']);
 
-            return redirect()->back()->with('success', 'All organizations have been set to reaccred.');
+            return redirect()->back()->with('success', 'All approved organizations have been set to reaccred.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred while updating the statuses. Please try again.');
         }
     }
+
 
 
 
