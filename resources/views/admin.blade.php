@@ -137,14 +137,15 @@
                                 <th scope="col">Logo</th>
                                 <th scope="col">Organization Name</th>
                                 <th scope="col">Program</th>
-                                <th scope="col">Bio</th>
-                                <th scope="col">Contact</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($organizations as $organization)
                                 <tr>
+                                <tr onclick="window.location.href='{{ route('admin.seeOrg', ['orgid' => $organization->id]) }}'"
+                                    style="cursor: pointer;">
+
                                     <th scope="row">{{ $loop->iteration }}</th>
                                     <td>
                                         <img src="{{ asset('cover-photos/' . $organization->coverphoto) }}"
@@ -153,14 +154,17 @@
                                     </td>
                                     <td>{{ $organization->orgname }}</td>
                                     <td>{{ $organization->course }}</td>
-                                    <td>{{ $organization->bio }}</td>
-                                    <td>{{ $organization->contact }}</td>
                                     <td class="d-flex gap-2">
                                         <button class="btn btn-danger delete-btn ms-2"
-                                            data-id="{{ $organization->id }}">
+                                            data-id="{{ $organization->id }}" type="button">
                                             Delete
                                         </button>
+                                        <button class="btn btn-success viewdocs-btn ms-2 ml-2"
+                                            data-id="{{ $organization->id }}" type="button">
+                                            View Docs
+                                        </button>
                                     </td>
+
                                 </tr>
                             @empty
                                 <tr>
@@ -172,6 +176,27 @@
                 </div>
             @endif
         </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="docsModal" tabindex="-1" aria-labelledby="docsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="docsModalLabel">Organization Documents</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modal-content">Loading documents...</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 
         <script>
@@ -226,6 +251,59 @@
                                 });
                         }
                     });
+                });
+            });
+
+            document.querySelectorAll('.viewdocs-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const orgId = this.getAttribute('data-id');
+
+                    fetch(`/organization-docs/${orgId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                const modalContent = document.getElementById('modal-content');
+                                let contentHTML =
+                                    `<p><strong>Documents for Organization ID: ${orgId}</strong></p><div class="documents-list">`;
+
+                                data.documents.forEach(doc => {
+                                    const fileExtension = doc.doc_filename.split('.').pop()
+                                        .toLowerCase();
+                                    const fileUrl = doc
+                                        .doc_url; // Full URL for the file (image or PDF)
+
+                                    if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                                        // For image files, use <img> to display them
+                                        contentHTML += `
+                                <div class="document-item">
+                                    <p>${doc.doc_filename}</p>
+                                    <img src="${fileUrl}" alt="${doc.doc_filename}" class="img-fluid" style="max-width: 100%; height: auto;">
+                                </div>
+                            `;
+                                    } else if (fileExtension === 'pdf') {
+                                        // For PDF files, use <embed> to display them
+                                        contentHTML += `
+                                <div class="document-item">
+                                    <p>${doc.doc_filename}</p>
+                                    <embed src="${fileUrl}" type="application/pdf" width="100%" height="500px">
+                                </div>
+                            `;
+                                    }
+                                });
+
+                                contentHTML += `</div>`;
+                                modalContent.innerHTML = contentHTML;
+
+                                // Show the modal
+                                $('#docsModal').modal('show');
+                            } else {
+                                Swal.fire('Error', 'Failed to load documents', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                            Swal.fire('Error', 'An unexpected error occurred', 'error');
+                        });
                 });
             });
         </script>

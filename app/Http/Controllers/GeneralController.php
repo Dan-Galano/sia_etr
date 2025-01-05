@@ -503,15 +503,36 @@ class GeneralController extends Controller
 
 //New code for attendance
 public function attendance($orgId, $eventId)
-{  
+{
+    // Fetch the event
     $post = Post::where('id', $eventId)->where('organization_id', $orgId)->first();
 
     if (!$post) {
         return abort(404, 'Event not found');
     }
 
+    // Fetch attendees with student details
+    $attendees = Attendance::where('post_id', $eventId)
+        ->with('student') // Load related student data
+        ->get();
 
-    return view('attendance', ['post' => $post, 'orgId' => $orgId]);
+    return view('attendance', [
+        'post' => $post,
+        'orgId' => $orgId,
+        'attendees' => $attendees,
+    ]);
+}
+
+
+
+public function listAttendees($org_id, $event_id)
+{
+    // Fetch attendees for the specific event
+    $attendees = Attendance::where('org_id', $org_id)
+        ->where('event_id', $event_id)
+        ->get();
+
+    return view('event.attendees', compact('attendees'));
 }
 
 public function storeAttendance(Request $request, $orgId, $eventId)
@@ -520,33 +541,38 @@ public function storeAttendance(Request $request, $orgId, $eventId)
         'studentId' => 'required',
     ]);
 
-    $attendance = Attendance::where('post_id', $eventId)->first();
-
+    // Find the student by their studentId
     $student = EnrolledStudent::where('studentId', $request->studentId)->first();
+
     if (!$student) {
-        if(!$attendance){
-            return redirect()->back()->with('error', 'Student ID not found.');
-        }
-        $totalAttendanceToDisplay = $attendance->totalAttendance;
-        session()->flash('totalAttendance', $totalAttendanceToDisplay);
         return redirect()->back()->with('error', 'Student ID not found.');
     }
 
-    if (!$attendance) {
-        $attendance = new Attendance();
-        $attendance->post_id = $eventId;
-        $attendance->totalAttendance = 1;
-        $attendance->save();
-    } else {
-        $attendance->totalAttendance += 1;
-        $attendance->save();
-    }
-    $totalAttendanceToDisplay = $attendance->totalAttendance;
+    // Check if attendance already exists for this student and event
+    $attendance = Attendance::where('post_id', $eventId)
+                             ->where('studentid', $student->studentid)
+                             ->first();
 
-    session()->flash('totalAttendance', $totalAttendanceToDisplay);
+    if ($attendance) {
+        return redirect()->back()->with('error', 'Attendance for this student has already been recorded.');
+    }
+
+    // Create a new attendance record for this student and event
+    $attendance = new Attendance();
+    $attendance->post_id = $eventId;
+    $attendance->studentid = $student->studentid;
+    $attendance->created_at = now();
+    $attendance->updated_at = now();
+    $attendance->save();
+
+    // Get the total attendance for the event (number of records in the attendance table)
+    $totalAttendance = Attendance::where('post_id', $eventId)->count();
+
+    session()->flash('totalAttendance', $totalAttendance);
 
     return redirect()->back()->with('success', 'Attendance recorded successfully!');
 }
+
 
 public function deleteEvent($orgId, $eventId)
 {
@@ -702,4 +728,29 @@ public function updateStatus($id)
 
         return redirect()->back()->with('success', 'Member deleted successfully.');
     }
+
+    public function getDocuments($orgId)
+    {
+        $documents = OrgRequiredDoc::where('school_org_id', $orgId)->get();
+    
+        // Add full URL to each document
+        $documents = $documents->map(function ($doc) {
+            $doc->doc_url = asset('org-docs/' . $doc->doc_filename); // This gives the full URL
+            return $doc;
+        });
+    
+        return response()->json([
+            'success' => true,
+            'documents' => $documents
+        ]);
+    }
+
+    public function seeOrg($orgid)
+    {
+        $organization = SchoolOrganization::findOrFail($orgid);
+        return view('view-org-admin', ['organization' => $organization]);
+    }
+    
+    
+
 }

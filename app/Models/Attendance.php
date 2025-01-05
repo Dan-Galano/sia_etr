@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Attendance extends Model
 {
     use HasFactory;
+
     // Table name
     protected $table = 'attendance';
 
@@ -21,11 +22,16 @@ class Attendance extends Model
     protected $keyType = 'int';
 
     // Mass assignable fields
-    protected $fillable = ['post_id', 'totalAttendance'];
+    protected $fillable = ['post_id', 'studentid', 'totalAttendance'];
 
     // Relationships
     public function post()
     {
         return $this->belongsTo(Post::class, 'post_id');
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(EnrolledStudent::class, 'studentid', 'studentid');
     }
 }

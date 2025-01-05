@@ -21,4 +21,10 @@ class EnrolledStudent extends Model
 
     // Mass assignable fields
     protected $fillable = ['studentId', 'name'];
+
+    public function attendance()
+    {
+        return $this->belongsTo(Attendance::class);
+    }
+
 }
