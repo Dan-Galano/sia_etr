@@ -187,8 +187,14 @@ Route::post('/posts/{post}/comments', [PostController::class, 'storeComment'])->
 Route::put('/events/{id}', [PostController::class, 'updateEventPost'])->name('events.update');
 Route::put('/eventwithphoto/{id}', [PostController::class, 'updateEventWithPhoto'])->name('eventwithphoto.update');
 
-
+// MEMBER STATUS TOGGLES
 Route::put('/organization/{id}/toggle-member/{member_id}', [GeneralController::class, 'toggleMember'])->name('organization.toggleMember');
+
+// ORG STATUS TOGGLES
+Route::put('/admin/toggle-organization/{organization_id}', [GeneralController::class, 'toggleOrganization'])->name('admin.toggleOrganization');
+
+// DISABLE ALL ORG
+Route::post('/organization/set-all-reaccred', [GeneralController::class, 'setAllReaccred'])->name('organization.setAllReaccred');
 
 
 Route::get('/profile', [GeneralController::class, 'showProfile'])->name('profile.show');
@@ -233,5 +239,12 @@ Route::get('organization/{org_id}/events/{event_id}/delete', [GeneralController:
 Route::get('/organization/{org_id}/attendance/{event_id}/attendees', [AttendanceController::class, 'listAttendees'])->name('event.attendees');
 
 Route::get('/organization-docs/{id}', [GeneralController::class, 'getDocuments']);
+
+
+//accreditation
+Route::post('/upload-required-docs', [GeneralController::class, 'uploadRequiredDocs'])->name('upload.required.docs');
+
+//accreditation if rejected 
+Route::post('/org/required-doc/store', [GeneralController::class, 'uploadReaccreditationDocument'])->name('org.requiredDoc.store');
 
 Route::get('/admin/see-org/{orgid}', [GeneralController::class, 'seeOrg'])->name('admin.seeOrg');

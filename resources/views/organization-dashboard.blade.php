@@ -15,6 +15,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
         .cover-photo {
@@ -308,6 +309,12 @@
                             aria-controls="reports" aria-selected="false">Reports</a>
                     </li>
                 @endif
+                <li class="nav-item">
+                    <a class="nav-link" id="submission-tab" data-toggle="modal" data-target="#submissionModal" role="tab">
+                        Reaccreditation
+                    </a>
+                </li>
+
             </ul>
 
 
@@ -945,12 +952,63 @@
                         @endforeach
                     </div>
 
+                    
+
+
+
 
 
                 </div>
 
                 <!-- -------------------- -->
 
+                <!-- REACCREDITATION MODAL -->
+
+                <div class="modal fade" id="submissionModal" tabindex="-1" role="dialog" aria-labelledby="submissionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="submissionModalLabel">Upload Files</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" name="school_org_id" id="school_org_id" value="{{ $orgid->id }}">
+                                <div class="modal-body">
+                                    <!-- Dropdown for options -->
+                                    <div class="form-group">
+                                        <label for="submissionType">Submission Type</label>
+                                        <select name="type" id="submissionType" class="form-control">
+                                            <option value="reaccreditation">Reaccreditation</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- File Upload -->
+                                    <div class="form-group">
+                                        <label for="files">Upload Files</label>
+                                        <div class="custom-file">
+                                            <input type="file" name="files[]" id="files" class="custom-file-input" multiple accept=".pdf,.doc,.docx">
+                                            <label class="custom-file-label" for="files">Choose files...</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div class="form-group">
+                                        <label for="description">Description</label>
+                                        <textarea name="description" id="description" class="form-control" rows="3" placeholder="Add any additional details here..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="uploadButton" class="btn btn-primary">Upload</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
 
 
@@ -1317,6 +1375,7 @@
                                         {{ $member->lastname }}</td>
                                     <td>{{ $member->email }}</td>
                                     {{-- <td>{{ $member->payment_status }}</td> --}}
+                                    
                                     <td>
                                         <form
                                             action="{{ route('organization.toggleMember', ['id' => $orgid->id, 'member_id' => $member->id]) }}"
@@ -1783,15 +1842,67 @@
             </div>
         </div>
     @endisset
-@else
+    
+    @elseif($orgStatus == 'reaccred')
+    <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 40vh; text-align: center; color: #ffc107;">
+        <i class="fas fa-exclamation-triangle fs-3" style="color: #ffc107; font-size: 2rem;"></i><br>
+        <h6 style="color: #6c757d;">You need to comply with the required documents for reaccreditation.</h6>
+
+        <!-- Button to trigger modal -->
+        <button  type="button" class="btn btn-warning" data-toggle="modal" data-target="#uploadModal">
+            Upload Documents
+        </button>
+    
+    </div>
+
+    <!-- Modal for uploading documents -->
+    <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadModalLabel">Upload Required Documents</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                <form id="reaccreditationForm" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="school_org_id" id="school_org_id" value="{{ $orgid->id }}">
+                    <div class="form-group">
+                        <label for="doc_file">Upload Document</label>
+                        <!-- Restrict to PDF and DOC files -->
+                        <input type="file" class="form-control-file" id="doc_file" name="doc_file" accept=".pdf, .doc, .docx" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submitReaccreditation">Upload Document</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @else
     <div class="container muted"
         style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 40vh; text-align: center; color: #6c757d;">
         <i class="fas fa-clock fs-3" style="color: #6c757d; font-size:2rem;"></i> <br>
         <h6 style="color: #6c757d;">Please wait for approval before your organization is registered.</h6>
         <p style="color: #6c757d;">If you think this is a mistake, message us at <a href="mailto:psunify@gmail.com"
                 style="color: #007bff;">psunify@gmail.com</a></p>
-
     </div>
+
+    
+
+    
+
+
 
 
 
@@ -1868,6 +1979,75 @@
                 }
             });
         }
+
+        // reaccreditation if rejected upload
+        $(document).ready(function() {
+        // When the form is submitted
+            $('#submitReaccreditation').on('click', function(e) {
+                e.preventDefault();  // Prevent default form submit
+
+                var formData = new FormData($('#reaccreditationForm')[0]);
+
+                // Append the type automatically
+                formData.append('type', 'reaccreditation');
+
+                // Get school_org_id from the hidden input
+                var schoolOrgId = $('#school_org_id').val();
+                formData.append('school_org_id', schoolOrgId);
+
+                $.ajax({
+                    url: '{{ route('org.requiredDoc.store') }}',  // Your route to handle the file upload
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function() {
+                        $('#submitReaccreditation').prop('disabled', true);  // Disable the submit button
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message using SweetAlert
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Document uploaded successfully!',
+                                confirmButtonText: 'Okay'
+                            });
+
+                            // Reset the form and close the modal
+                            $('#reaccreditationForm')[0].reset();
+                            $('#submitReaccreditation').prop('disabled', false);
+                            $('#uploadModal').modal('hide');
+                        } else {
+                            // Show error message using SweetAlert
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'An error occurred. Please try again.',
+                                confirmButtonText: 'Okay'
+                            });
+
+                            $('#submitReaccreditation').prop('disabled', false);
+                        }
+                    },
+                    error: function() {
+                        // Show error message using SweetAlert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred. Please try again.',
+                            confirmButtonText: 'Okay'
+                        });
+
+                        $('#submitReaccreditation').prop('disabled', false);
+                    }
+                });
+            });
+        });
+
+
+
+
     </script>
 
     <script>
@@ -1941,7 +2121,6 @@
                     }
                 },
                 error: function(xhr, status, error) {
-
                     $('#studentid-error').show().text('account not found');
                 }
             });
@@ -2151,7 +2330,57 @@
             $('#officersTable').DataTable();
             $('#previousOfficersTable').DataTable();
             $('#reportsTable').DataTable();
+
+            console.log(document.getElementById('school_org_id').value);
+
         });
+
+        // REACCREDITATION UPLOAD
+        document.getElementById('uploadButton').addEventListener('click', function () {
+            const form = document.getElementById('uploadForm');
+            const formData = new FormData(form);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            fetch("{{ route('upload.required.docs') }}", {
+                method: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message || 'Validation errors occurred.',
+                        icon: 'error',
+                        confirmButtonText: 'Try Again'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'An error occurred: ' + error.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            });
+        });
+
+
+        
+
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

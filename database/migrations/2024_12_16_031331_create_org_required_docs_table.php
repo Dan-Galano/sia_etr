@@ -12,6 +12,7 @@ class CreateOrgRequiredDocsTable extends Migration
             $table->id();
             $table->foreignId('school_org_id')->constrained('school_organizations')->onDelete('cascade');
             $table->string('doc_filename');
+            $table->enum('status', ['pending', 'reaccreditation', 'other'])->default('pending');
             $table->timestamps();
         });
     }
