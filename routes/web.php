@@ -219,6 +219,8 @@ Route::post('/organization/{id}/toggleJoin', [MemberController::class, 'toggleJo
 
 Route::post('/officers', [OfficerController::class, 'store'])->name('officer.add');
 Route::put('/officers/{id}', [OfficerController::class, 'delete'])->name('officer.delete');
+Route::put('/endofficer/{id}', [OfficerController::class, 'updateIsCurrent'])->name('officer.endOfficerTerm');
+Route::get('/officers/mark-all-as-previous', [OfficerController::class, 'markAllAsPrevious'])->name('officers.markAllAsPrevious');
 
 Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
 Route::get('/export-reports-pdf/{orgId}', [ReportController::class, 'exportReportsPDF'])->name('export.reports.pdf');
